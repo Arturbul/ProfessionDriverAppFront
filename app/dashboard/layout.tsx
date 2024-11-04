@@ -15,6 +15,8 @@ import {
 	SidebarProvider,
 	SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
+
 export default async function Layout({
 	children,
 }: {
@@ -34,13 +36,11 @@ export default async function Layout({
 						<Breadcrumb>
 							<BreadcrumbList>
 								<BreadcrumbItem className="hidden md:block">
-									<BreadcrumbLink href="#">
-										Building Your Application
-									</BreadcrumbLink>
+									<BreadcrumbLink href="#">Dashboard</BreadcrumbLink>
 								</BreadcrumbItem>
 								<BreadcrumbSeparator className="hidden md:block" />
 								<BreadcrumbItem>
-									<BreadcrumbPage>Data Fetching</BreadcrumbPage>
+									<BreadcrumbPage>Overview</BreadcrumbPage>
 								</BreadcrumbItem>
 							</BreadcrumbList>
 						</Breadcrumb>
