@@ -63,7 +63,6 @@ export function DataTable<TData, TValue>({
 			columnVisibility,
 		},
 	});
-
 	return (
 		<div>
 			<div className="flex items-center py-4">
@@ -152,23 +151,28 @@ export function DataTable<TData, TValue>({
 					</TableBody>
 				</Table>
 			</div>
-			<div className="flex items-center justify-end space-x-2 py-4">
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.previousPage()}
-					disabled={!table.getCanPreviousPage()}
-				>
-					Previous
-				</Button>
-				<Button
-					variant="outline"
-					size="sm"
-					onClick={() => table.nextPage()}
-					disabled={!table.getCanNextPage()}
-				>
-					Next
-				</Button>
+			<div className="flex justify-between">
+				<div className="flex items-center justify-start space-x-2 py-4">
+					<p className="ml-1 text-sm">Total: {data.length}</p>
+				</div>
+				<div className="flex items-center justify-end space-x-2 py-4">
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => table.previousPage()}
+						disabled={!table.getCanPreviousPage()}
+					>
+						Previous
+					</Button>
+					<Button
+						variant="outline"
+						size="sm"
+						onClick={() => table.nextPage()}
+						disabled={!table.getCanNextPage()}
+					>
+						Next
+					</Button>
+				</div>
 			</div>
 		</div>
 	);

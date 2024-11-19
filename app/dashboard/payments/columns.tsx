@@ -13,7 +13,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import DataTableColumnHeader from "@/components/ui/datatable/columnheader";
+import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Payment = {
@@ -31,17 +31,19 @@ export const columns: ColumnDef<Payment>[] = [
 				<DataTableColumnHeader column={column} title="Status" />
 			</div>
 		),
+		enableColumnFilter: true,
 	},
 	{
 		accessorKey: "email",
 		header: ({ column }) => (
 			<DataTableColumnHeader column={column} title="Email" />
 		),
+		enableColumnFilter: true,
 	},
 	{
 		accessorKey: "amount",
 		header: ({ column }) => (
-			<div className="text-right">
+			<div className="text-center">
 				<DataTableColumnHeader column={column} title="Amount" />
 			</div>
 		),
@@ -54,6 +56,7 @@ export const columns: ColumnDef<Payment>[] = [
 
 			return <div className="text-center font-medium">{formatted}</div>;
 		},
+		enableColumnFilter: true,
 	},
 	{
 		id: "actions",
