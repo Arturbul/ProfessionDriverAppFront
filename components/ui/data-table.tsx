@@ -13,7 +13,7 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-
+import { ExtendedColumnDef } from "@/app/lib/extensions";
 import {
 	Table,
 	TableBody,
@@ -30,16 +30,39 @@ import {
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-interface DataTableProps<TData, TValue> {
-	columns: ColumnDef<TData, TValue>[];
+import FilterComponent from "./datatabe_comp/filter-table";
+interface DataTableProps<TData> {
+	columns: ExtendedColumnDef<TData>[]; // Kolumny z rozszerzonym typem
 	data: TData[];
 }
+function generateFilters<TData>(
+	table: any,
+	columns: ExtendedColumnDef<TData>[]
+) {
+	return columns
+		.filter((col) => col.enableColumnFilter && col.filterMeta)
+		.map((col) => {
+			if (!col.accessorKey) {
+				console.warn("Missing accessorKey for column:", col);
+				return null;
+			}
 
-export function DataTable<TData, TValue>({
-	columns,
-	data,
-}: DataTableProps<TData, TValue>) {
+			const { type, placeholder, options } = col.filterMeta!;
+
+			return (
+				<FilterComponent
+					key={col.accessorKey}
+					column={table.getColumn(col.accessorKey)}
+					type={type}
+					placeholder={placeholder}
+					options={options}
+				/>
+			);
+		})
+		.filter(Boolean);
+}
+
+export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
@@ -57,6 +80,12 @@ export function DataTable<TData, TValue>({
 		getSortedRowModel: getSortedRowModel(),
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
+		filterFns: {
+			number: (row, columnId, filterValue) => {
+				const rowValue: number = row.getValue(columnId);
+				return rowValue >= Number(filterValue);
+			},
+		},
 		state: {
 			sorting,
 			columnFilters,
@@ -65,15 +94,10 @@ export function DataTable<TData, TValue>({
 	});
 	return (
 		<div>
+			<div className="flex items-center py-4 space-x-4">
+				{generateFilters(table, columns)}
+			</div>
 			<div className="flex items-center py-4">
-				<Input
-					placeholder="Filter emails..."
-					value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-					onChange={(event) =>
-						table.getColumn("email")?.setFilterValue(event.target.value)
-					}
-					className="max-w-sm"
-				/>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">

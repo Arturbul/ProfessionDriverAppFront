@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ExtendedColumnDef } from "@/app/lib/extensions";
 import { ArrowUpDown } from "lucide-react";
 import { MoreHorizontal } from "lucide-react";
 
@@ -23,22 +23,25 @@ export type Payment = {
 	email: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ExtendedColumnDef<Payment>[] = [
 	{
 		accessorKey: "status",
-		header: ({ column }) => (
-			<div className="text-left">
-				<DataTableColumnHeader column={column} title="Status" />
-			</div>
-		),
+		header: "Status",
 		enableColumnFilter: true,
+		filterMeta: {
+			type: "select",
+			options: ["pending", "processing", "success", "failed"],
+			placeholder: "All",
+		},
 	},
 	{
 		accessorKey: "email",
-		header: ({ column }) => (
-			<DataTableColumnHeader column={column} title="Email" />
-		),
+		header: "Email",
 		enableColumnFilter: true,
+		filterMeta: {
+			type: "text",
+			placeholder: "Filter emails...",
+		},
 	},
 	{
 		accessorKey: "amount",
@@ -57,6 +60,15 @@ export const columns: ColumnDef<Payment>[] = [
 			return <div className="text-center font-medium">{formatted}</div>;
 		},
 		enableColumnFilter: true,
+		filterFn: (row, columnId, filterValue) => {
+			// `filterValue` to wartość z komponentu
+			const rowValue: number = row.getValue(columnId);
+			return rowValue >= Number(filterValue); // Filtruj na podstawie wartości liczbowej
+		},
+		filterMeta: {
+			type: "number",
+			placeholder: "Filter amount...",
+		},
 	},
 	{
 		id: "actions",

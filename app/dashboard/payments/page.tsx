@@ -1,6 +1,7 @@
 import { Payment, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
-
+import { ExtendedColumnDef } from "@/app/lib/extensions";
+import FilterComponent from "@/components/ui/datatabe_comp/filter-table";
 async function getData(): Promise<Payment[]> {
 	// Fetch data from your API here.
 	return [
