@@ -14,6 +14,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
+import { getActionsForPayment } from "./actionsConfig";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Payment = {
@@ -26,21 +27,38 @@ export type Payment = {
 export const columns: ExtendedColumnDef<Payment>[] = [
 	{
 		accessorKey: "status",
-		header: "Status",
+		header: ({ column }) => (
+			<div className="text-left">
+				<DataTableColumnHeader column={column} title="Status" />
+			</div>
+		),
 		enableColumnFilter: true,
 		filterMeta: {
 			type: "select",
 			options: ["pending", "processing", "success", "failed"],
 			placeholder: "All",
 		},
+		filterFn: (row, columnId, filterValue) => {
+			if (filterValue === "All") return true; // Brak filtrowania
+			const rowValue = row.getValue(columnId);
+			return rowValue === filterValue; // Filtruj po dokładnej wartości
+		},
 	},
 	{
 		accessorKey: "email",
-		header: "Email",
+		header: ({ column }) => (
+			<div className="text-left">
+				<DataTableColumnHeader column={column} title="Email" />
+			</div>
+		),
 		enableColumnFilter: true,
 		filterMeta: {
 			type: "text",
 			placeholder: "Filter emails...",
+		},
+		filterFn: (row, columnId, filterValue) => {
+			const rowValue = row.getValue(columnId)?.toString()?.toLowerCase() ?? "";
+			return rowValue.includes(filterValue.toLowerCase()); // Filtruj po fragmencie tekstu
 		},
 	},
 	{
@@ -61,7 +79,6 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		},
 		enableColumnFilter: true,
 		filterFn: (row, columnId, filterValue) => {
-			// `filterValue` to wartość z komponentu
 			const rowValue: number = row.getValue(columnId);
 			return rowValue >= Number(filterValue); // Filtruj na podstawie wartości liczbowej
 		},
@@ -73,51 +90,7 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 	{
 		id: "actions",
 		cell: ({ row }) => {
-			const payment = row.original;
-			type ActionItem =
-				| {
-						type: "action";
-						label: string;
-						onClick: (params?: any) => void;
-						params?: any;
-				  }
-				| { type: "separator" };
-
-			const actions: ActionItem[] = [
-				{
-					type: "action",
-					label: "Copy payment ID",
-					onClick: (params) => {
-						navigator.clipboard.writeText(params?.id);
-						console.log("Copied payment ID:", params?.id);
-					},
-					params: { id: payment.id },
-				},
-				{
-					type: "separator",
-				},
-				{
-					type: "action",
-					label: "View customer",
-					onClick: (params) => console.log("View customer:", params?.customer),
-					params: { customer: payment.status },
-				},
-				{
-					type: "action",
-					label: "View payment details",
-					onClick: (params) => console.log("View payment details:", params),
-					params: { id: payment.id, status: payment.status },
-				},
-				{
-					type: "separator",
-				},
-				{
-					type: "action",
-					label: "Refund payment",
-					onClick: (params) => console.log("Refund payment:", params?.email),
-					params: { email: payment.email },
-				},
-			];
+			const actions = getActionsForPayment(row.original);
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>

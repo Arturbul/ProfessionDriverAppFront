@@ -68,3 +68,12 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
 		totalPages,
 	];
 };
+
+export type ActionItem =
+	| {
+			type: "action";
+			label: string;
+			onClick: (params?: any) => void;
+			params?: any;
+	  }
+	| { type: "separator" };
