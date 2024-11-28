@@ -74,7 +74,50 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		id: "actions",
 		cell: ({ row }) => {
 			const payment = row.original;
+			type ActionItem =
+				| {
+						type: "action";
+						label: string;
+						onClick: (params?: any) => void;
+						params?: any;
+				  }
+				| { type: "separator" };
 
+			const actions: ActionItem[] = [
+				{
+					type: "action",
+					label: "Copy payment ID",
+					onClick: (params) => {
+						navigator.clipboard.writeText(params?.id);
+						console.log("Copied payment ID:", params?.id);
+					},
+					params: { id: payment.id },
+				},
+				{
+					type: "separator",
+				},
+				{
+					type: "action",
+					label: "View customer",
+					onClick: (params) => console.log("View customer:", params?.customer),
+					params: { customer: payment.status },
+				},
+				{
+					type: "action",
+					label: "View payment details",
+					onClick: (params) => console.log("View payment details:", params),
+					params: { id: payment.id, status: payment.status },
+				},
+				{
+					type: "separator",
+				},
+				{
+					type: "action",
+					label: "Refund payment",
+					onClick: (params) => console.log("Refund payment:", params?.email),
+					params: { email: payment.email },
+				},
+			];
 			return (
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
@@ -85,14 +128,19 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem
-							onClick={() => navigator.clipboard.writeText(payment.id)}
-						>
-							Copy payment ID
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>View customer</DropdownMenuItem>
-						<DropdownMenuItem>View payment details</DropdownMenuItem>
+						{actions.map((action, index) => {
+							if (action.type === "action") {
+								return (
+									<DropdownMenuItem
+										key={index}
+										onClick={() => action.onClick(action.params)}
+									>
+										{action.label}
+									</DropdownMenuItem>
+								);
+							}
+							return <DropdownMenuSeparator key={index} />;
+						})}
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);
