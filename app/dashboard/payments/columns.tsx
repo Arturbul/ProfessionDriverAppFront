@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
 import { getActionsForPayment } from "./actionsConfig";
+import { DatePickerWithRange } from "@/components/ui/date-picker-range";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Payment = {
@@ -23,6 +24,7 @@ export type Payment = {
 	status: "pending" | "processing" | "success" | "failed";
 	email: string;
 	createdAt: Date;
+	processed?: Date | null;
 };
 
 export const columns: ExtendedColumnDef<Payment>[] = [
@@ -95,6 +97,66 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		},
 	},
 	{
+		accessorKey: "createdAt",
+		header: ({ column }) => (
+			<div className="text-center">
+				<DataTableColumnHeader column={column} title="Created" />
+			</div>
+		),
+		enableColumnFilter: true,
+		filterMeta: {
+			title: "Date",
+			type: "date",
+			placeholder: "Select a date...",
+		},
+		cell: ({ row }) => {
+			const date = new Date(row.getValue("createdAt"));
+			return (
+				<div className="text-center">{date.toISOString().slice(0, 10)}</div>
+			);
+		},
+		filterFn: (row, columnId, filterValue) => {
+			if (!filterValue) return true; // Brak filtra
+			const rowValue = new Date(row.getValue(columnId)).setHours(0, 0, 0, 0); // Ustaw godzinę na 00:00:00
+			const filterDate = new Date(filterValue).setHours(0, 0, 0, 0);
+			return rowValue === filterDate; // Porównanie wybranej daty
+		},
+	},
+	{
+		accessorKey: "processed",
+		header: ({ column }) => (
+			<div className="text-center">
+				<DataTableColumnHeader column={column} title="Created" />
+			</div>
+		),
+		enableColumnFilter: true,
+		filterMeta: {
+			title: "Date",
+			type: "date-range", // Typ filtra jako zakres dat
+			placeholder: "Select date range...",
+		},
+		cell: ({ row }) => {
+			const date = new Date(row.getValue("createdAt"));
+			return (
+				<div className="text-center">{date.toISOString().slice(0, 10)}</div>
+			);
+		},
+		filterFn: (row, columnId, filterValue) => {
+			if (!filterValue || !filterValue.from || !filterValue.to) return true; // Brak filtra
+
+			const rowValue = new Date(row.getValue(columnId));
+			const fromDate = new Date(filterValue.from);
+			const toDate = new Date(filterValue.to);
+
+			// Usuwamy czas z dat przed porównaniem
+			const cleanRowValue = removeTime(rowValue);
+			const cleanFromDate = removeTime(fromDate);
+			const cleanToDate = removeTime(toDate);
+
+			return cleanRowValue >= cleanFromDate && cleanRowValue <= cleanToDate;
+		},
+	},
+	{
 		id: "actions",
 		cell: ({ row }) => {
 			const actions = getActionsForPayment(row.original);
@@ -127,3 +189,8 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		},
 	},
 ];
+function removeTime(date: Date) {
+	const newDate = new Date(date);
+	newDate.setHours(0, 0, 0, 0); // Ustawiamy godzinę na 00:00:00
+	return newDate;
+}

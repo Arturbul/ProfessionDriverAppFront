@@ -1,10 +1,12 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import SelectFilter from "../select-filter";
+import { DatePicker } from "../date_picker";
+import { DatePickerWithRange } from "../date-picker-range";
 interface FilterComponentProps {
 	column: any;
 	placeholder?: string;
-	type: "text" | "number" | "number-range" | "select";
+	type: "text" | "number" | "number-range" | "select" | "date" | "date-range";
 	options?: string[];
 	title?: string; // Dodaj pole dla tytułu
 }
@@ -81,7 +83,29 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 						</div>
 					);
 				})()}
+			{type === "date" && (
+				<DatePicker
+					selectedDate={column.getFilterValue() as Date | undefined}
+					onDateChange={(date) => column?.setFilterValue(date)}
+				/>
+			)}
+			{type === "date-range" &&
+				(() => {
+					const columnFilterValue = column.getFilterValue() || {
+						from: null,
+						to: null,
+					};
+					console.log(columnFilterValue);
 
+					return (
+						<DatePickerWithRange
+							selectedRange={columnFilterValue}
+							onSelect={(range: { from?: Date | null; to?: Date | null }) =>
+								column?.setFilterValue(range)
+							}
+						/>
+					);
+				})()}
 			{type === "text" && (
 				<Input
 					placeholder={placeholder}
