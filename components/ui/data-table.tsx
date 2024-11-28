@@ -47,7 +47,7 @@ function generateFilters<TData>(
 				return null;
 			}
 
-			const { type, placeholder, options } = col.filterMeta!;
+			const { type, placeholder, options, title } = col.filterMeta!;
 
 			return (
 				<FilterComponent
@@ -56,6 +56,7 @@ function generateFilters<TData>(
 					type={type}
 					placeholder={placeholder}
 					options={options}
+					title={title}
 				/>
 			);
 		})

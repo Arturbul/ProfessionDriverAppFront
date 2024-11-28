@@ -34,6 +34,7 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		),
 		enableColumnFilter: true,
 		filterMeta: {
+			title: "Status",
 			type: "select",
 			options: ["pending", "processing", "success", "failed"],
 			placeholder: "All",
@@ -53,6 +54,7 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		),
 		enableColumnFilter: true,
 		filterMeta: {
+			title: "Email",
 			type: "text",
 			placeholder: "Filter emails...",
 		},
@@ -80,11 +82,15 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		enableColumnFilter: true,
 		filterFn: (row, columnId, filterValue) => {
 			const rowValue: number = row.getValue(columnId);
-			return rowValue >= Number(filterValue); // Filtruj na podstawie wartości liczbowej
+			const { from, to } = filterValue || {};
+			if (from != null && rowValue < from) return false;
+			if (to != null && rowValue > to) return false;
+			return true; // Spełnia warunki
 		},
 		filterMeta: {
-			type: "number",
-			placeholder: "Filter amount...",
+			title: "Amount",
+			type: "number-range",
+			placeholder: "Filter range...",
 		},
 	},
 	{
