@@ -22,6 +22,7 @@ export type Payment = {
 	amount: number;
 	status: "pending" | "processing" | "success" | "failed";
 	email: string;
+	createdAt: Date;
 };
 
 export const columns: ExtendedColumnDef<Payment>[] = [
