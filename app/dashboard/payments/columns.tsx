@@ -15,6 +15,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
 import { getActionsForPayment } from "./actionsConfig";
+import { DatePickerWithRange } from "@/components/ui/date-picker-range";
+import {
+	filterDate,
+	filterDateRange,
+	filterNumberRange,
+	filterSelect,
+	filterText,
+} from "@/app/lib/table-filters";
+import { getDateCell } from "@/components/ui/datatabe_comp/table-cell-filters";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Payment = {
@@ -22,6 +31,8 @@ export type Payment = {
 	amount: number;
 	status: "pending" | "processing" | "success" | "failed";
 	email: string;
+	createdAt: Date;
+	processed?: Date | null;
 };
 
 export const columns: ExtendedColumnDef<Payment>[] = [
@@ -39,11 +50,7 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 			options: ["pending", "processing", "success", "failed"],
 			placeholder: "All",
 		},
-		filterFn: (row, columnId, filterValue) => {
-			if (filterValue === "All") return true; // Brak filtrowania
-			const rowValue = row.getValue(columnId);
-			return rowValue === filterValue; // Filtruj po dokładnej wartości
-		},
+		filterFn: filterSelect,
 	},
 	{
 		accessorKey: "email",
@@ -58,10 +65,7 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 			type: "text",
 			placeholder: "Filter emails...",
 		},
-		filterFn: (row, columnId, filterValue) => {
-			const rowValue = row.getValue(columnId)?.toString()?.toLowerCase() ?? "";
-			return rowValue.includes(filterValue.toLowerCase()); // Filtruj po fragmencie tekstu
-		},
+		filterFn: filterText,
 	},
 	{
 		accessorKey: "amount",
@@ -74,24 +78,50 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 			const amount = parseFloat(row.getValue("amount"));
 			const formatted = new Intl.NumberFormat("en-US", {
 				style: "currency",
-				currency: "USD",
+				currency: "PLN",
 			}).format(amount);
 
 			return <div className="text-center font-medium">{formatted}</div>;
 		},
 		enableColumnFilter: true,
-		filterFn: (row, columnId, filterValue) => {
-			const rowValue: number = row.getValue(columnId);
-			const { from, to } = filterValue || {};
-			if (from != null && rowValue < from) return false;
-			if (to != null && rowValue > to) return false;
-			return true; // Spełnia warunki
-		},
+		filterFn: filterNumberRange,
 		filterMeta: {
 			title: "Amount",
 			type: "number-range",
 			placeholder: "Filter range...",
 		},
+	},
+	{
+		accessorKey: "createdAt",
+		header: ({ column }) => (
+			<div className="text-center">
+				<DataTableColumnHeader column={column} title="Created" />
+			</div>
+		),
+		enableColumnFilter: true,
+		filterMeta: {
+			title: "Date",
+			type: "date",
+			placeholder: "Select a date...",
+		},
+		cell: ({ row }) => getDateCell(row, "createdAt", true, "none"),
+		filterFn: filterDate,
+	},
+	{
+		accessorKey: "processed",
+		header: ({ column }) => (
+			<div className="text-center">
+				<DataTableColumnHeader column={column} title="Processed" />
+			</div>
+		),
+		enableColumnFilter: true,
+		filterMeta: {
+			title: "Date",
+			type: "date-range", // Typ filtra jako zakres dat
+			placeholder: "Select date range...",
+		},
+		cell: ({ row }) => getDateCell(row, "processed", true, "none"),
+		filterFn: filterDateRange,
 	},
 	{
 		id: "actions",
@@ -126,3 +156,8 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		},
 	},
 ];
+function removeTime(date: Date) {
+	const newDate = new Date(date);
+	newDate.setHours(0, 0, 0, 0); // Ustawiamy godzinę na 00:00:00
+	return newDate;
+}
