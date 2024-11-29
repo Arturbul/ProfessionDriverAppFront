@@ -95,8 +95,12 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
 	});
 	return (
 		<div>
-			<div className="flex items-center py-4 space-x-4">
-				{generateFilters(table, columns)}
+			<div className="flex flex-wrap items-center py-4 gap-4">
+				{generateFilters(table, columns).map((filter, index) => (
+					<div key={index} className="basis-full sm:basis-1/4 md:basis-1">
+						{filter}
+					</div>
+				))}
 			</div>
 			<div className="flex items-center py-4">
 				<DropdownMenu>

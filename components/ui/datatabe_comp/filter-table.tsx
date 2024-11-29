@@ -95,7 +95,6 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 						from: null,
 						to: null,
 					};
-					console.log(columnFilterValue);
 
 					return (
 						<DatePickerWithRange
@@ -111,7 +110,7 @@ const FilterComponent: React.FC<FilterComponentProps> = ({
 					placeholder={placeholder}
 					value={(column?.getFilterValue() as string) ?? ""}
 					onChange={(event) => column?.setFilterValue(event.target.value)}
-					className="max-w-sm"
+					className="min-w-48 max-w-sm"
 				/>
 			)}
 		</div>

@@ -24,12 +24,12 @@ export const DatePicker: React.FC<CalendarFilterProps> = ({
 			<PopoverTrigger asChild>
 				<Button
 					variant="outline"
-					className={`w-full justify-start ${
+					className={`w-32 justify-start font-normal ${
 						!selectedDate && "text-muted-foreground"
 					}`}
 				>
-					{selectedDate ? format(selectedDate, "PPP") : "Select a date"}
-					<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+					{selectedDate ? format(selectedDate, "LLL dd, y") : "Select a date"}
+					<CalendarIcon />
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">

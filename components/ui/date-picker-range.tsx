@@ -31,9 +31,7 @@ export function DatePickerWithRange({
 	// Aktualizacja stanu po wybraniu nowego zakresu daty
 	const handleSelect = (newDateRange: DateRange | undefined) => {
 		setDate(newDateRange);
-		if (newDateRange) {
-			onSelect({ from: newDateRange.from, to: newDateRange.to });
-		}
+		onSelect({ from: newDateRange?.from, to: newDateRange?.to });
 	};
 
 	return (
@@ -44,8 +42,8 @@ export function DatePickerWithRange({
 						id="date"
 						variant={"outline"}
 						className={cn(
-							"w-[300px] justify-start text-left font-normal",
-							!date && "text-muted-foreground"
+							"w-60 justify-start font-normal text-left",
+							!date?.from && !date?.to && "text-muted-foreground" // Poprawiona logika sprawdzania daty
 						)}
 					>
 						<CalendarIcon />
@@ -59,7 +57,7 @@ export function DatePickerWithRange({
 								format(date.from, "LLL dd, y")
 							)
 						) : (
-							<span>Pick a date</span>
+							<span>Pick a date range</span>
 						)}
 					</Button>
 				</PopoverTrigger>

@@ -126,7 +126,7 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		accessorKey: "processed",
 		header: ({ column }) => (
 			<div className="text-center">
-				<DataTableColumnHeader column={column} title="Created" />
+				<DataTableColumnHeader column={column} title="Processed" />
 			</div>
 		),
 		enableColumnFilter: true,
@@ -136,24 +136,49 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 			placeholder: "Select date range...",
 		},
 		cell: ({ row }) => {
-			const date = new Date(row.getValue("createdAt"));
+			const processedValue = row.getValue("processed");
+
+			// Sprawdzenie, czy wartość jest poprawnym typem
+			if (
+				!processedValue ||
+				(typeof processedValue !== "string" &&
+					typeof processedValue !== "number" &&
+					!(processedValue instanceof Date))
+			) {
+				return <div className="text-center">brak</div>; // Wartość null, undefined lub nieprawidłowy typ
+			}
+
+			// Próba konwersji na datę
+			const date = new Date(processedValue);
+			if (isNaN(date.getTime())) {
+				return <div className="text-center">brak</div>; // Jeśli data jest nieprawidłowa
+			}
+
 			return (
 				<div className="text-center">{date.toISOString().slice(0, 10)}</div>
 			);
 		},
 		filterFn: (row, columnId, filterValue) => {
-			if (!filterValue || !filterValue.from || !filterValue.to) return true; // Brak filtra
+			if (!filterValue || !filterValue.from || !filterValue.to) return true;
 
-			const rowValue = new Date(row.getValue(columnId));
-			const fromDate = new Date(filterValue.from);
-			const toDate = new Date(filterValue.to);
+			// Funkcja do usuwania godziny z daty
+			const removeTime = (date: Date) => {
+				const newDate = new Date(date);
+				newDate.setHours(0, 0, 0, 0);
+				return newDate;
+			};
 
-			// Usuwamy czas z dat przed porównaniem
-			const cleanRowValue = removeTime(rowValue);
-			const cleanFromDate = removeTime(fromDate);
-			const cleanToDate = removeTime(toDate);
+			const processedValue = row.getValue(columnId);
+			// Upewnij się, że `processedValue` jest prawidłową datą
+			if (!processedValue || !(processedValue instanceof Date)) return false;
 
-			return cleanRowValue >= cleanFromDate && cleanRowValue <= cleanToDate;
+			// Usuń godzinę z daty rekordu i zakresu filtra
+			const rowDate = removeTime(new Date(processedValue));
+			const fromDate = removeTime(new Date(filterValue.from));
+			const toDate = removeTime(new Date(filterValue.to));
+
+			// Porównanie dat
+			return rowDate >= fromDate && rowDate <= toDate;
 		},
 	},
 	{
