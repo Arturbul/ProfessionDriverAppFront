@@ -2,8 +2,9 @@
 import { Payment, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
 import { getActionButtons } from "./tableActionsConfig";
+import React from "react";
 
-async function getData(): Promise<Payment[]> {
+async function getPayments(): Promise<Payment[]> {
 	// Fetch data from your API here.
 	return [
 		{
@@ -129,12 +130,28 @@ async function getData(): Promise<Payment[]> {
 	];
 }
 
+async function getData(filters: any) {
+	// Wysyłanie zapytania GET do API z filtrami
+	const filterParams = new URLSearchParams(filters).toString();
+	//const response = await fetch(`/api/data?${filterParams}`);
+	console.log("params:", filterParams);
+	console.log("filters:", filters);
+	const data = await getPayments();
+	return data;
+}
+
 export default async function DemoPage() {
-	const data = await getData();
+	const [filters, setFilters] = React.useState<any>({});
+	const data = await getData(filters);
 	const actionButtons = getActionButtons;
 	return (
 		<div className="container mx-auto py-10">
-			<DataTable columns={columns} data={data} actionButtons={actionButtons} />
+			<DataTable
+				columns={columns}
+				data={data}
+				actionButtons={actionButtons}
+				onFilterChange={setFilters}
+			/>
 		</div>
 	);
 }

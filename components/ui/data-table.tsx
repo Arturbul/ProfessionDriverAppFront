@@ -41,6 +41,7 @@ interface DataTableProps<TData> {
 	columns: ExtendedColumnDef<TData>[]; // Kolumny z rozszerzonym typem
 	data: TData[];
 	actionButtons?: ActionButtonProps[];
+	onFilterChange: React.Dispatch<any>;
 }
 function generateFilters<TData>(
 	table: any,
@@ -74,6 +75,7 @@ export function DataTable<TData>({
 	columns,
 	data,
 	actionButtons = [],
+	onFilterChange,
 }: DataTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -82,11 +84,18 @@ export function DataTable<TData>({
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({});
 	const [isFiltersVisible, setIsFiltersVisible] = React.useState(false);
+
+	const handleFilterChange = (filters: any) => {
+		setColumnFilters(filters);
+		if (onFilterChange) {
+			onFilterChange(filters); // Zaktualizuj filtry w stanie nadrzędnym
+		}
+	};
 	const table = useReactTable({
 		data,
 		columns,
 		onSortingChange: setSorting,
-		onColumnFiltersChange: setColumnFilters,
+		onColumnFiltersChange: handleFilterChange,
 		getCoreRowModel: getCoreRowModel(),
 		getPaginationRowModel: getPaginationRowModel(),
 		getSortedRowModel: getSortedRowModel(),
