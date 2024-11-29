@@ -24,7 +24,7 @@ export const DatePicker: React.FC<CalendarFilterProps> = ({
 			<PopoverTrigger asChild>
 				<Button
 					variant="outline"
-					className={`w-32 justify-start font-normal ${
+					className={`w-36 justify-start font-normal ${
 						!selectedDate && "text-muted-foreground"
 					}`}
 				>
