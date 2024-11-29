@@ -31,9 +31,16 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import FilterComponent from "./datatabe_comp/filter-table";
+
+interface ActionButtonProps {
+	label: string;
+	onClick: () => void;
+}
+
 interface DataTableProps<TData> {
 	columns: ExtendedColumnDef<TData>[]; // Kolumny z rozszerzonym typem
 	data: TData[];
+	actionButtons?: ActionButtonProps[];
 }
 function generateFilters<TData>(
 	table: any,
@@ -63,14 +70,18 @@ function generateFilters<TData>(
 		.filter(Boolean);
 }
 
-export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
+export function DataTable<TData>({
+	columns,
+	data,
+	actionButtons = [],
+}: DataTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
 	);
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({});
-
+	const [isFiltersVisible, setIsFiltersVisible] = React.useState(false);
 	const table = useReactTable({
 		data,
 		columns,
@@ -93,16 +104,48 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
 			columnVisibility,
 		},
 	});
+
+	const toggleFiltersVisibility = () => {
+		setIsFiltersVisible(!isFiltersVisible);
+	};
 	return (
 		<div>
-			<div className="flex flex-wrap items-center py-4 gap-4">
-				{generateFilters(table, columns).map((filter, index) => (
-					<div key={index} className="basis-full sm:basis-1/4 md:basis-1">
-						{filter}
-					</div>
-				))}
+			<Button
+				onClick={toggleFiltersVisibility}
+				variant="outline"
+				className="ml-auto bg-gray-100"
+			>
+				{isFiltersVisible ? "Hide Filters" : "Show Filters"}
+			</Button>
+
+			<div
+				className={`filters flex flex-wrap items-center py-4 gap-4 transition-all duration-300 ease-in-out overflow-hidden ${
+					isFiltersVisible ? "opacity-100 max-h-screen" : "opacity-0 max-h-0"
+				}`}
+			>
+				{isFiltersVisible && (
+					<>
+						{generateFilters(table, columns).map((filter, index) => (
+							<div key={index} className="basis-full sm:basis-1/4 md:basis-1">
+								{filter}
+							</div>
+						))}
+					</>
+				)}
 			</div>
 			<div className="flex items-center py-4">
+				<div className="flex gap-4">
+					{actionButtons.map((button, index) => (
+						<Button
+							key={index}
+							onClick={button.onClick}
+							variant="outline"
+							className="ml-auto"
+						>
+							{button.label}
+						</Button>
+					))}
+				</div>
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">
