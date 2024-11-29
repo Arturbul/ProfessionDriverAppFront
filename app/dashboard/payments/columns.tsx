@@ -14,8 +14,8 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
-import { getActionsForPayment } from "./actionsConfig";
-import { DatePickerWithRange } from "@/components/ui/date-picker-range";
+import { getActionsForPayment } from "./rowActionsConfig";
+
 import {
 	filterDate,
 	filterDateRange,
@@ -156,8 +156,3 @@ export const columns: ExtendedColumnDef<Payment>[] = [
 		},
 	},
 ];
-function removeTime(date: Date) {
-	const newDate = new Date(date);
-	newDate.setHours(0, 0, 0, 0); // Ustawiamy godzinę na 00:00:00
-	return newDate;
-}

@@ -1,7 +1,8 @@
+"use client";
 import { Payment, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
-import { ExtendedColumnDef } from "@/app/lib/extensions";
-import FilterComponent from "@/components/ui/datatabe_comp/filter-table";
+import { getActionButtons } from "./tableActionsConfig";
+
 async function getData(): Promise<Payment[]> {
 	// Fetch data from your API here.
 	return [
@@ -130,10 +131,10 @@ async function getData(): Promise<Payment[]> {
 
 export default async function DemoPage() {
 	const data = await getData();
-
+	const actionButtons = getActionButtons;
 	return (
 		<div className="container mx-auto py-10">
-			<DataTable columns={columns} data={data} />
+			<DataTable columns={columns} data={data} actionButtons={actionButtons} />
 		</div>
 	);
 }
