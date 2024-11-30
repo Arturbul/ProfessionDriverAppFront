@@ -26,9 +26,9 @@ import { useRouter } from "next/navigation";
 
 // Validation schema
 const formSchema = z.object({
-	login: z
+	userName: z
 		.string()
-		.min(2, { message: "Login must be at least 2 characters long." }),
+		.min(2, { message: "User name must be at least 2 characters long." }),
 	email: z.string().email({ message: "Must be a valid email address." }),
 	password: z
 		.string()
@@ -46,7 +46,7 @@ export function RegistrationForm() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			login: "",
+			userName: "",
 			email: "",
 			password: "",
 			firstName: "",
@@ -138,15 +138,15 @@ export function RegistrationForm() {
 					/>
 					<FormField
 						control={form.control}
-						name="login"
+						name="userName"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Login</FormLabel>
+								<FormLabel>User Name</FormLabel>
 								<FormControl>
 									<div className="relative">
 										<Input
 											type="text"
-											placeholder="Enter your login"
+											placeholder="Enter your user name"
 											{...field}
 											className="pl-10"
 										/>
