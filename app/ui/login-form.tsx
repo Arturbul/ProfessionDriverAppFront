@@ -19,10 +19,10 @@ import {
 	ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
-import { authenticate } from "@/app/lib/actions"; // Assuming this is the same function as before
-import { useActionState } from "react";
+import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-// Define the schema for form validation
+// Validation schema
 const formSchema = z.object({
 	identifier: z
 		.string()
@@ -36,12 +36,14 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
-	const [errorMessage, formAction, isPending] = useActionState(
-		authenticate,
-		undefined
-	);
+	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [isPending, setIsPending] = useState(false);
+	const router = useRouter();
+	const searchParams = useSearchParams();
 
-	// Initialize form using react-hook-form with zod validation
+	const redirectTo = searchParams.get("redirectTo") || "/dashboard";
+
+	// Initialize form
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -50,14 +52,42 @@ export function LoginForm() {
 		},
 	});
 
-	// Define the form submission handler
+	// Define submit handler
 	async function onSubmit(values: z.infer<typeof formSchema>) {
-		const formData = new FormData();
-		formData.append("email", values.identifier); //aktualnie obsluga tylo email
-		formData.append("password", values.password);
+		setErrorMessage(null); // Clear previous errors
+		setIsPending(true);
+		try {
+			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+			// Send login request
+			const response = await fetch(`${apiUrl}/api/auth/login`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					identifier: values.identifier,
+					password: values.password,
+				}),
+			});
 
-		// Authenticate the user
-		await formAction(formData);
+			if (!response.ok) {
+				const contentType = response.headers.get("Content-Type");
+				if (contentType && contentType.includes("application/json")) {
+					const errorData = await response.json();
+					throw new Error(errorData.message || "Login failed");
+				} else {
+					throw new Error("Invalid credentials, try again.");
+				}
+			}
+
+			const data = await response.json();
+			document.cookie = `auth_token=${data.token}; path=/`;
+
+			// Redirect to dashboard
+			router.push(redirectTo);
+		} catch (error) {
+			setErrorMessage((error as Error).message);
+		} finally {
+			setIsPending(false); // Reset pending state after completion
+		}
 	}
 
 	return (
