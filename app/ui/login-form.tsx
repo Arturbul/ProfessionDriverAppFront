@@ -59,7 +59,7 @@ export function LoginForm() {
 		try {
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 			// Send login request
-			const response = await fetch(`${apiUrl}/api/auth/login`, {
+			const response = await fetch(`${apiUrl}/auth/login`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -67,7 +67,6 @@ export function LoginForm() {
 					password: values.password,
 				}),
 			});
-
 			if (!response.ok) {
 				const contentType = response.headers.get("Content-Type");
 				if (contentType && contentType.includes("application/json")) {

@@ -61,7 +61,7 @@ export function RegistrationForm() {
 		try {
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 			// Send registration request
-			const response = await fetch(`${apiUrl}/api/auth/register`, {
+			const response = await fetch(`${apiUrl}/auth/register`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify(values),
