@@ -25,17 +25,10 @@ import { getDateCell } from "@/components/ui/datatabe_comp/table-cell-filters";
 import { getActionsForCompany } from "./rowActionsConfig";
 import ActionsDropdown from "@/app/ui/actions-dropdown";
 import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
+import { Address } from "@/app/lib/interfaces/ValueObjects";
 
-export interface Address {
-	city: string;
-	street: string;
-	postalCode: string;
-	country: string;
-}
-
-export interface CompanyBasic {
+export interface CompanyBasic extends Address {
 	name: string;
-	address: Address;
 }
 
 export const columns: ExtendedColumnDef<CompanyBasic>[] = [
@@ -55,7 +48,7 @@ export const columns: ExtendedColumnDef<CompanyBasic>[] = [
 		filterFn: filterText,
 	},
 	{
-		accessorKey: "address.city",
+		accessorKey: "city",
 		header: ({ column }) => (
 			<div className="text-left">
 				<DataTableColumnHeader column={column} title="City" />
@@ -70,7 +63,7 @@ export const columns: ExtendedColumnDef<CompanyBasic>[] = [
 		filterFn: filterText,
 	},
 	{
-		accessorKey: "address.street",
+		accessorKey: "street",
 		header: ({ column }) => (
 			<div className="text-left">
 				<DataTableColumnHeader column={column} title="Street" />
@@ -85,7 +78,7 @@ export const columns: ExtendedColumnDef<CompanyBasic>[] = [
 		filterFn: filterText,
 	},
 	{
-		accessorKey: "address.postalCode",
+		accessorKey: "postalCode",
 		header: ({ column }) => (
 			<div className="text-left">
 				<DataTableColumnHeader column={column} title="Postal Code" />
@@ -100,7 +93,7 @@ export const columns: ExtendedColumnDef<CompanyBasic>[] = [
 		filterFn: filterText,
 	},
 	{
-		accessorKey: "address.country",
+		accessorKey: "country",
 		header: ({ column }) => (
 			<div className="text-left">
 				<DataTableColumnHeader column={column} title="Country" />
@@ -110,8 +103,8 @@ export const columns: ExtendedColumnDef<CompanyBasic>[] = [
 		filterMeta: {
 			title: "Country",
 			type: "select",
-			options: ["PL", "USA", "UK", "Canada", "Germany", "France"],
-			placeholder: "Filter by country...",
+			options: ["Poland", "USA", "UK", "Canada", "Germany", "France"],
+			placeholder: "All",
 		},
 		filterFn: filterSelect,
 	},

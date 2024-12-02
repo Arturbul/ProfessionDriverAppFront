@@ -25,8 +25,8 @@ export const getActionsForCompany = (company: CompanyBasic): ActionItem[] => [
 		type: "action",
 		label: "View company address",
 		onClick: (params) => {
-			console.log("View company address:", params?.address);
+			console.log("View company address:", params?.street);
 		},
-		params: { address: company.address },
+		params: { address: company.street },
 	},
 ];
