@@ -24,8 +24,9 @@ export async function getCompaniBasicData(): Promise<CompanyBasic[]> {
 		if (!response.ok) {
 			throw new Error(`Failed to fetch data: ${response.statusText}`);
 		}
-
-		const data: CompanyBasic[] = await response.json();
+		let result = await response.json();
+		console.log(result);
+		const data: CompanyBasic[] = result;
 		return data;
 	} catch (error) {
 		console.error("Error fetching data:", error);

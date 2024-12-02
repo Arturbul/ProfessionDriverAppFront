@@ -1,3 +1,5 @@
+"use client";
+
 import { ExtendedColumnDef } from "@/app/lib/extensions";
 import { ArrowUpDown } from "lucide-react";
 import { MoreHorizontal } from "lucide-react";
@@ -11,7 +13,6 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
 
 import {
 	filterDate,
@@ -23,6 +24,7 @@ import {
 import { getDateCell } from "@/components/ui/datatabe_comp/table-cell-filters";
 import { getActionsForCompany } from "./rowActionsConfig";
 import ActionsDropdown from "@/app/ui/actions-dropdown";
+import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
 
 export interface Address {
 	city: string;
