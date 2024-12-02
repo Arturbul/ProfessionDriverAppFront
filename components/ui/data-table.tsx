@@ -41,6 +41,7 @@ interface DataTableProps<TData> {
 	columns: ExtendedColumnDef<TData>[]; // Kolumny z rozszerzonym typem
 	data: TData[];
 	actionButtons?: ActionButtonProps[];
+	isLoading?: boolean;
 }
 function generateFilters<TData>(
 	table: any,
@@ -74,6 +75,7 @@ export function DataTable<TData>({
 	columns,
 	data,
 	actionButtons = [],
+	isLoading = false,
 }: DataTableProps<TData>) {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -194,7 +196,16 @@ export function DataTable<TData>({
 						))}
 					</TableHeader>
 					<TableBody>
-						{table.getRowModel().rows?.length ? (
+						{isLoading ? (
+							<TableRow>
+								<TableCell
+									colSpan={columns.length}
+									className="h-24 text-center"
+								>
+									Processing...
+								</TableCell>
+							</TableRow>
+						) : table.getRowModel().rows?.length ? (
 							table.getRowModel().rows.map((row) => (
 								<TableRow
 									key={row.id}
