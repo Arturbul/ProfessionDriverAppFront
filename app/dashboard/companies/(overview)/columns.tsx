@@ -25,13 +25,9 @@ import { getDateCell } from "@/components/ui/datatabe_comp/table-cell-filters";
 import { getActionsForCompany } from "./rowActionsConfig";
 import ActionsDropdown from "@/app/ui/actions-dropdown";
 import DataTableColumnHeader from "@/components/ui/datatabe_comp/columnheader";
-import { Address } from "@/app/lib/interfaces/ValueObjects";
+import { CompanyBasicDTO } from "../getData";
 
-export interface CompanyBasic extends Address {
-	name: string;
-}
-
-export const columns: ExtendedColumnDef<CompanyBasic>[] = [
+export const columns: ExtendedColumnDef<CompanyBasicDTO>[] = [
 	{
 		accessorKey: "name",
 		header: ({ column }) => (

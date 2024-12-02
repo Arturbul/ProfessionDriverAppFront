@@ -1,18 +1,18 @@
 "use client";
 import { useState, useEffect } from "react";
 import { DataTable } from "@/components/ui/data-table";
-import { columns, CompanyBasic } from "./columns";
-import { getCompaniBasicData } from "./getData";
+import { columns } from "./columns";
 import { useActionButtons } from "./tableActionsConfig";
+import { CompanyBasicDTO, getCompaniesBasicData } from "../getData";
 
 export default function CompaniesPage() {
 	// Explicitly type the state
-	const [data, setData] = useState<CompanyBasic[]>([]);
+	const [data, setData] = useState<CompanyBasicDTO[]>([]);
 	const actionButtons = useActionButtons();
 	const [isLoading, setIsLoading] = useState(true);
 	useEffect(() => {
 		async function fetchData() {
-			const fetchedData = await getCompaniBasicData();
+			const fetchedData = await getCompaniesBasicData();
 			setData(fetchedData);
 			setIsLoading(false);
 		}

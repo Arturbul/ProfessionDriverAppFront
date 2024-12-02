@@ -21,20 +21,31 @@ const companySchema = z.object({
 	name: z
 		.string()
 		.min(2, { message: "Company name must be at least 2 characters long." }),
-	managerUserName: z.string().min(2, {
-		message: "Manager username must be at least 2 characters long.",
-	}),
-	address: z.object({
-		city: z.string().min(1, { message: "City is required." }),
-		street: z.string().optional(),
-		postalCode: z.string().optional(),
-		country: z.string().optional(),
-	}),
+	managerUserName: z
+		.string()
+		.min(2, { message: "Manager username must be at least 2 characters long." })
+		.optional(),
+	address: z
+		.object({
+			city: z.string().min(1, { message: "City is required." }),
+			street: z.string().optional(),
+			postalCode: z.string().optional(),
+			country: z.string().optional(),
+		})
+		.optional(), // Make the entire address field optional
 });
+
 interface CompanyFormProps {
 	authToken: string;
+	initialData?: z.infer<typeof companySchema>;
+	isEditMode: boolean;
 }
-export function CompanyForm({ authToken }: CompanyFormProps) {
+
+export function CompanyForm({
+	authToken,
+	initialData,
+	isEditMode,
+}: CompanyFormProps) {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const [isPending, setIsPending] = useState(false);
 	const router = useRouter();
@@ -42,7 +53,7 @@ export function CompanyForm({ authToken }: CompanyFormProps) {
 	// Initialize form
 	const form = useForm<z.infer<typeof companySchema>>({
 		resolver: zodResolver(companySchema),
-		defaultValues: {
+		defaultValues: initialData || {
 			name: "",
 			managerUserName: "",
 			address: {
@@ -60,8 +71,20 @@ export function CompanyForm({ authToken }: CompanyFormProps) {
 		setIsPending(true);
 		try {
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-			const response = await fetch(`${apiUrl}/companies`, {
-				method: "POST",
+			const url = new URL(`${apiUrl}/companies/details-basic`);
+			if (isEditMode) {
+				url.searchParams.append("name", `${initialData?.name}`);
+			}
+
+			// DO DOKONCZENIA!
+			// const url = isEditMode
+			// 	? `${apiUrl}/companies/${initialData?.name}` // Assuming company ID is passed in initialData
+			// 	: `${apiUrl}/companies`;
+
+			const method = isEditMode ? "PUT" : "POST"; // PUT for editing, POST for creating
+
+			const response = await fetch(url, {
+				method: method,
 				headers: {
 					Authorization: `Bearer ${authToken}`,
 					"Content-Type": "application/json",
@@ -70,8 +93,17 @@ export function CompanyForm({ authToken }: CompanyFormProps) {
 			});
 
 			if (!response.ok) {
-				const errorData = await response.json();
-				throw new Error(errorData.message || "Company creation failed");
+				const contentType = response.headers.get("Content-Type");
+				if (contentType && contentType.includes("application/json")) {
+					console.log(contentType);
+					const errorData = await response.json();
+					throw new Error(
+						errorData.message || "Invalid credentials, try again."
+					);
+				} else {
+					const errorData = await response.text();
+					throw new Error(errorData || "Invalid credentials, try again.");
+				}
 			}
 
 			router.push("/dashboard");
@@ -86,7 +118,9 @@ export function CompanyForm({ authToken }: CompanyFormProps) {
 		<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
 				<div className="rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-					<h1 className="mb-3 text-2xl font-bold">Create Company Profile</h1>
+					<h1 className="mb-3 text-2xl font-bold">
+						{isEditMode ? "Edit Company Profile" : "Create Company Profile"}
+					</h1>
 					<FormField
 						control={form.control}
 						name="name"
@@ -104,23 +138,25 @@ export function CompanyForm({ authToken }: CompanyFormProps) {
 							</FormItem>
 						)}
 					/>
-					<FormField
-						control={form.control}
-						name="managerUserName"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Manager Username</FormLabel>
-								<FormControl>
-									<Input
-										type="text"
-										placeholder="Enter manager username"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+					{!isEditMode && (
+						<FormField
+							control={form.control}
+							name="managerUserName"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Manager Username</FormLabel>
+									<FormControl>
+										<Input
+											type="text"
+											placeholder="Enter manager username"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					)}
 					<h2 className="mt-4 text-lg font-semibold">Address</h2>
 					<FormField
 						control={form.control}

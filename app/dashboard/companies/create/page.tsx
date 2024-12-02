@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { CompanyForm } from "./company-from";
+import { CompanyForm } from "../../../ui/companies/forms/company-from";
 
 export default function CreateCompanyPage() {
 	const cookieStore = cookies();
@@ -7,7 +7,7 @@ export default function CreateCompanyPage() {
 
 	return (
 		<div className="container mx-auto mt-8">
-			<CompanyForm authToken={token || ""} />
+			<CompanyForm authToken={token || ""} isEditMode={false} />
 		</div>
 	);
 }

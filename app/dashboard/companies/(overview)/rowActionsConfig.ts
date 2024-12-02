@@ -1,8 +1,10 @@
 import { useRouter } from "next/navigation"; // Import useRouter from Next.js
 import { ActionItem } from "@/app/lib/utils";
-import { CompanyBasic } from "./columns";
+import { CompanyBasicDTO } from "../getData";
 
-export const getActionsForCompany = (company: CompanyBasic): ActionItem[] => {
+export const getActionsForCompany = (
+	company: CompanyBasicDTO
+): ActionItem[] => {
 	const router = useRouter(); // Initialize useRouter
 
 	return [
@@ -21,7 +23,7 @@ export const getActionsForCompany = (company: CompanyBasic): ActionItem[] => {
 			label: "Edit company",
 			onClick: (params) => {
 				// Navigate to the edit page (relative path)
-				router.push(`companies/edit/${company.name}`);
+				router.push(`companies/${company.name}/edit`);
 			},
 			params: { name: company.name },
 		},
@@ -33,7 +35,7 @@ export const getActionsForCompany = (company: CompanyBasic): ActionItem[] => {
 				// Navigate to the address page (relative path)
 				router.push(`companies/address/${company.name}`);
 			},
-			params: { address: company.street },
+			params: { address: company },
 		},
 	];
 };

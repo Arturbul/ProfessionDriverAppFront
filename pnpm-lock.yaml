@@ -65,6 +65,18 @@ importers:
       date-fns:
         specifier: ^4.1.0
         version: 4.1.0
+      js-cookie:
+        specifier: ^3.0.5
+        version: 3.0.5
+      jsrsasign:
+        specifier: ^11.1.0
+        version: 11.1.0
+      jwt-decode:
+        specifier: ^4.0.0
+        version: 4.0.0
+      jwt-simple:
+        specifier: ^0.5.6
+        version: 0.5.6
       lucide-react:
         specifier: ^0.454.0
         version: 0.454.0(react@19.0.0-rc-f38c22b244-20240704)
@@ -1130,8 +1142,23 @@ packages:
   jose@5.4.1:
     resolution: {integrity: sha512-U6QajmpV/nhL9SyfAewo000fkiRQ+Yd2H0lBxJJ9apjpOgkOcBQJWOrMo917lxLptdS/n/o/xPzMkXhF46K8hQ==}
 
+  js-cookie@3.0.5:
+    resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
+    engines: {node: '>=14'}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
+
+  jsrsasign@11.1.0:
+    resolution: {integrity: sha512-Ov74K9GihaK9/9WncTe1mPmvrO7Py665TUfUKvraXBpu+xcTWitrtuOwcjf4KMU9maPaYn0OuaWy0HOzy/GBXg==}
+
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
+
+  jwt-simple@0.5.6:
+    resolution: {integrity: sha512-40aUybvhH9t2h71ncA1/1SbtTNCVZHgsTsTgqPUxGWDmUDrXyDf2wMNQKEbdBjbf4AI+fQhbECNTV6lWxQKUzg==}
+    engines: {node: '>= 0.4.0'}
 
   lilconfig@2.1.0:
     resolution: {integrity: sha512-utWOt/GHzuUxnLKxB6dk81RoOeoNeHgbrXiuGk4yyF5qlRz+iIVWu56E2fqGHFrXz0QNUhLB/8nKqvRH66JKGQ==}
@@ -2653,7 +2680,15 @@ snapshots:
 
   jose@5.4.1: {}
 
+  js-cookie@3.0.5: {}
+
   js-tokens@4.0.0: {}
+
+  jsrsasign@11.1.0: {}
+
+  jwt-decode@4.0.0: {}
+
+  jwt-simple@0.5.6: {}
 
   lilconfig@2.1.0: {}
 
