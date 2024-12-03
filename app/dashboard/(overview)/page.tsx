@@ -10,6 +10,7 @@ import { CardsSkeleton } from "@/app/ui/skeletons";
 import { Metadata } from "next";
 import CardWrapper from "./card-wrapper";
 import DistanceChart from "./distance-chart";
+import LatestWorkLogsSummary from "./work-log-summary";
 
 export const metadata: Metadata = {
 	title: "Dashboard",
@@ -31,7 +32,7 @@ export default async function Page() {
 					<DistanceChart />
 				</Suspense>
 				<Suspense fallback={<LatestInvoicesSkeleton />}>
-					<LatestInvoices />
+					<LatestWorkLogsSummary />
 				</Suspense>
 			</div>
 		</>

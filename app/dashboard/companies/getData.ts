@@ -7,6 +7,7 @@ import {
 } from "@/lib/utils";
 import { Address } from "@/app/lib/interfaces/ValueObjects";
 import { DistanceData } from "@/app/lib/utils";
+import { DriverWorkLogSummaryDTO } from "@/app/lib/interfaces/DTOs";
 
 export interface CompanyBasicDTO extends Address {
 	name: string;
@@ -418,6 +419,44 @@ export async function getDriverDistanceByYear(
 
 		const result = await getJsonResponse(response);
 		const data: DistanceData[] = result;
+		return data;
+	} catch (error) {
+		console.error("Error fetching data:", error);
+		throw error;
+	}
+}
+
+export async function getLatestWorkLogs(
+	count: number,
+	driverUserName?: string | null
+): Promise<DriverWorkLogSummaryDTO[]> {
+	try {
+		const cookieStore = cookies();
+		const token = cookieStore.get("auth_token")?.value;
+
+		if (!token) {
+			throw new Error("JWT token not found");
+		}
+
+		const roles = getRolesFromJWT(token);
+		const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+		const url = new URL(`${apiUrl}/drivers/driver-worklogs/recent`);
+
+		url.searchParams.append("logCount", count.toString());
+		if (roles && roles.includes("Admin") && driverUserName) {
+			url.searchParams.append("driverUserName", driverUserName);
+		}
+
+		const response = await fetch(url.toString(), {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		const result = await getJsonResponse(response);
+		const data: DriverWorkLogSummaryDTO[] = result;
 		return data;
 	} catch (error) {
 		console.error("Error fetching data:", error);

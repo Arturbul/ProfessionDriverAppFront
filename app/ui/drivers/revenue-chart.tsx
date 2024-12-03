@@ -42,7 +42,7 @@ export default function DriverDistanceChart({
 					{distances.map((month) => (
 						<div key={month.month} className="flex flex-col items-center gap-2">
 							<div
-								className="w-full rounded-md bg-green-300"
+								className="w-full rounded-md bg-sky-400"
 								style={{
 									height: `${(chartHeight / topLabel) * month.distance}px`,
 								}}
