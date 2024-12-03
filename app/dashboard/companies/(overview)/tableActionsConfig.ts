@@ -12,11 +12,5 @@ export function useActionButtons() {
 				router.push("companies/create");
 			},
 		},
-		{
-			label: "Export",
-			onClick: () => {
-				console.log("Export action triggered");
-			},
-		},
 	];
 }

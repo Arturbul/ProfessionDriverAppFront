@@ -71,15 +71,12 @@ export function CompanyForm({
 		setIsPending(true);
 		try {
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-			const url = new URL(`${apiUrl}/companies/details-basic`);
+			const url = new URL(`${apiUrl}/companies`);
 			if (isEditMode) {
+				url.href = url.href + "/details-basic";
+				console.log(url);
 				url.searchParams.append("name", `${initialData?.name}`);
 			}
-
-			// DO DOKONCZENIA!
-			// const url = isEditMode
-			// 	? `${apiUrl}/companies/${initialData?.name}` // Assuming company ID is passed in initialData
-			// 	: `${apiUrl}/companies`;
 
 			const method = isEditMode ? "PUT" : "POST"; // PUT for editing, POST for creating
 

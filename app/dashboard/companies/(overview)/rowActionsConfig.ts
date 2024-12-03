@@ -13,7 +13,7 @@ export const getActionsForCompany = (
 			label: "View company details",
 			onClick: (params) => {
 				// Navigate to the details page (relative path)
-				router.push(`companies/details/${company.name}`);
+				router.push(`companies/${company.name}/details`);
 			},
 			params: { name: company.name },
 		},
@@ -26,16 +26,6 @@ export const getActionsForCompany = (
 				router.push(`companies/${company.name}/edit`);
 			},
 			params: { name: company.name },
-		},
-		{ type: "separator" },
-		{
-			type: "action",
-			label: "View company address",
-			onClick: (params) => {
-				// Navigate to the address page (relative path)
-				router.push(`companies/address/${company.name}`);
-			},
-			params: { address: company },
 		},
 	];
 };

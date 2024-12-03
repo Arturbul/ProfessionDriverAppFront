@@ -39,12 +39,15 @@ export function getRolesFromJWT(token: string): string[] | null {
 	}
 }
 
-export async function getJsonResponse(response: Response) {
+export async function getJsonResponse(response: Response, errorNoData = true) {
 	await ValidateResponse(response);
 
 	const rawResponse = await response.text();
 	if (!rawResponse) {
-		throw new Error("No data returned from the server.");
+		if (errorNoData) {
+			throw new Error("No data returned from the server.");
+		}
+		return null;
 	}
 
 	const result = JSON.parse(rawResponse);
