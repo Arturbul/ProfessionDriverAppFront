@@ -6,9 +6,10 @@ import {
 	RevenueChartSkeleton,
 	LatestInvoicesSkeleton,
 } from "@/app/ui/skeletons";
-import CardWrapper from "@/app/ui/dashboard/cards";
 import { CardsSkeleton } from "@/app/ui/skeletons";
 import { Metadata } from "next";
+import CardWrapper from "./card-wrapper";
+import DistanceChart from "./distance-chart";
 
 export const metadata: Metadata = {
 	title: "Dashboard",
@@ -27,7 +28,7 @@ export default async function Page() {
 			</div>
 			<div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-4 lg:grid-cols-8">
 				<Suspense fallback={<RevenueChartSkeleton />}>
-					<RevenueChart />
+					<DistanceChart />
 				</Suspense>
 				<Suspense fallback={<LatestInvoicesSkeleton />}>
 					<LatestInvoices />

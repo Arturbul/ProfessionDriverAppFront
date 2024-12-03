@@ -77,3 +77,24 @@ export type ActionItem =
 			params?: any;
 	  }
 	| { type: "separator" };
+
+// Typ reprezentujący dane o dystansie
+export type DistanceData = {
+	month: string;
+	distance: number;
+};
+
+export const generateYAxisDistance = (distances: DistanceData[]) => {
+	// Oblicz, jakie etykiety chcemy wyświetlić na osi Y
+	// na podstawie najwyższej wartości w danych i zaokrąglone w tysiącach
+	const yAxisLabels: string[] = [];
+	const highestRecord = Math.max(...distances.map((month) => month.distance));
+	const topLabel = Math.ceil(highestRecord / 1000) * 1000;
+
+	// Generowanie etykiet dla osi Y, przy czym każda etykieta to dystans w tysiącach
+	for (let i = topLabel; i >= 0; i -= 1000) {
+		yAxisLabels.push(`${i / 1000}K`);
+	}
+
+	return { yAxisLabels, topLabel };
+};
