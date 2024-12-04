@@ -55,6 +55,11 @@ export default function WorkLogCards({
 				type="startStop"
 				onClick={handleStartStop}
 				Icon={isWorkStarted ? StopIcon : PlayIcon}
+				className={
+					isWorkStarted
+						? "bg-rose-400 hover:bg-rose-300"
+						: "bg-sky-400 hover:bg-sky-300"
+				}
 			/>
 
 			{/* Aktualnie przejechane kilometry */}

@@ -28,7 +28,7 @@ export default async function Page() {
 					<WorkLogWrapper />
 				</Suspense>
 			</div>
-			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-6">
 				<Suspense fallback={<CardsSkeleton />}>
 					<CardWrapper />
 				</Suspense>
