@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { lusitana } from "@/app/ui/fonts";
 import {
 	ClockIcon,
@@ -25,26 +25,55 @@ export default function WorkLogCards({
 	const [isWorkStarted, setIsWorkStarted] = useState(initialWorkStarted);
 	const [mileage, setMileage] = useState(initialMileage);
 	const [workTime, setWorkTime] = useState(initialWorkTime);
-	const [isModalOpen, setIsModalOpen] = useState(false); // Stan modalu
+	const [startTime, setStartTime] = useState<Date | null>(null); // Czas rozpoczęcia pracy
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formType, setFormType] = useState<"start" | "stop">("start");
 
-	// Funkcja obsługi start/stop
+	useEffect(() => {
+		let interval: NodeJS.Timeout | null = null;
+
+		if (isWorkStarted && startTime) {
+			// Aktualizuj czas pracy co sekundę
+			interval = setInterval(() => {
+				const now = new Date();
+				const diffInSeconds = Math.floor(
+					(now.getTime() - startTime.getTime()) / 1000
+				);
+				setWorkTime(diffInSeconds / 3600); // Przekształć na godziny
+			}, 1000);
+		}
+
+		return () => {
+			if (interval) clearInterval(interval);
+		};
+	}, [isWorkStarted, startTime]);
+
 	const handleStartStop = () => {
 		setFormType(isWorkStarted ? "stop" : "start");
-		setIsModalOpen(true); // Otwórz modal
+		setIsModalOpen(true);
 	};
 
-	// Obsługa zamknięcia modalu
 	const handleModalClose = () => {
 		setIsModalOpen(false);
 	};
 
-	// Obsługa wysyłania formularza
-	const handleFormSubmit = (data: any) => {
+	const handleFormSubmit = (data: { mileage: number }) => {
 		alert(`Work log ${formType} submitted: ${JSON.stringify(data)}`);
-		setIsWorkStarted(formType === "start");
+		if (formType === "start") {
+			setIsWorkStarted(true);
+			setStartTime(new Date()); // Ustaw aktualny czas jako czas rozpoczęcia
+			setMileage(data.mileage); // Ustaw wartość mileage z formularza
+		} else {
+			setIsWorkStarted(false);
+			setStartTime(null); // Zresetuj czas rozpoczęcia
+			setWorkTime(0); // Zeruj czas pracy
+			setMileage(0); // Zeruj przebieg
+		}
 		setIsModalOpen(false);
 	};
+
+	const displayedWorkTime = isWorkStarted ? workTime.toFixed(2) : "0.00";
+	const displayedMileage = isWorkStarted ? mileage : 0;
 
 	return (
 		<>
@@ -64,8 +93,8 @@ export default function WorkLogCards({
 
 			{/* Aktualnie przejechane kilometry */}
 			<Card
-				title="Current Mileage"
-				value={mileage}
+				title="Start Mileage"
+				value={displayedMileage}
 				type="mileage"
 				unit="km"
 				Icon={MapIcon}
@@ -74,7 +103,7 @@ export default function WorkLogCards({
 			{/* Aktualny czas pracy */}
 			<Card
 				title="Work Time"
-				value={workTime}
+				value={displayedWorkTime}
 				type="workTime"
 				unit="h"
 				Icon={ClockIcon}
@@ -125,9 +154,9 @@ function Card({
 			className={clsx(
 				"rounded-xl bg-gray-50 p-2 shadow-sm",
 				{
-					"cursor-pointer hover:bg-gray-100": onClick, // Default interaction classes only if `onClick` exists
+					"cursor-pointer hover:bg-gray-100": onClick,
 				},
-				className // Merge user-defined classes
+				className
 			)}
 			onClick={onClick}
 		>
