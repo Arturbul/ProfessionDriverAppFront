@@ -8,6 +8,7 @@ import {
 	PlayIcon,
 	StopIcon,
 } from "@heroicons/react/24/outline";
+import { WorkLogForm } from "./worklogform";
 
 type WorkLogCardsProps = {
 	isWorkStarted: boolean;
@@ -23,15 +24,25 @@ export default function WorkLogCards({
 	const [isWorkStarted, setIsWorkStarted] = useState(initialWorkStarted);
 	const [mileage, setMileage] = useState(initialMileage);
 	const [workTime, setWorkTime] = useState(initialWorkTime);
+	const [isModalOpen, setIsModalOpen] = useState(false); // Stan modalu
+	const [formType, setFormType] = useState<"start" | "stop">("start");
 
 	// Funkcja obsługi start/stop
 	const handleStartStop = () => {
-		if (isWorkStarted) {
-			alert("Work log entry completed.");
-		} else {
-			alert("Work log started.");
-		}
-		setIsWorkStarted(!isWorkStarted);
+		setFormType(isWorkStarted ? "stop" : "start");
+		setIsModalOpen(true); // Otwórz modal
+	};
+
+	// Obsługa zamknięcia modalu
+	const handleModalClose = () => {
+		setIsModalOpen(false);
+	};
+
+	// Obsługa wysyłania formularza
+	const handleFormSubmit = (data: any) => {
+		alert(`Work log ${formType} submitted: ${JSON.stringify(data)}`);
+		setIsWorkStarted(formType === "start");
+		setIsModalOpen(false);
 	};
 
 	return (
@@ -62,6 +73,25 @@ export default function WorkLogCards({
 				unit="h"
 				Icon={ClockIcon}
 			/>
+
+			{/* Modal */}
+			{isModalOpen && (
+				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+					<div className="w-full max-w-md bg-white rounded-lg p-6 shadow-lg">
+						<WorkLogForm
+							type={formType}
+							onSubmit={handleFormSubmit}
+							isPending={false}
+						/>
+						<button
+							onClick={handleModalClose}
+							className="mt-4 w-full text-center text-sm text-gray-500 hover:underline"
+						>
+							Close
+						</button>
+					</div>
+				</div>
+			)}
 		</>
 	);
 }

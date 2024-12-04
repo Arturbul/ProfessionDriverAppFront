@@ -29,8 +29,10 @@ const formSchema = z.object({
 	}),
 	place: z.string().optional(),
 	mileage: z
-		.number()
-		.nonnegative({ message: "Mileage must be a positive number." })
+		.preprocess(
+			(value) => (typeof value === "string" ? parseFloat(value) : value),
+			z.number().nonnegative({ message: "Mileage must be a positive number." })
+		)
 		.optional(),
 	driverUserName: z.string().optional(),
 });
