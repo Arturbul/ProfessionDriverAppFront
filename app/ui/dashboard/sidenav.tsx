@@ -2,9 +2,18 @@ import Link from "next/link";
 import NavLinks from "@/app/ui/dashboard/nav-links";
 import AcmeLogo from "@/app/ui/app-logo";
 import { PowerIcon } from "@heroicons/react/24/outline";
-import { signOut } from "@/auth";
+import { cookies } from "next/headers";
+import { useRouter } from "next/navigation";
 
 export default function SideNav() {
+	function signOut() {
+		const cookieStore = cookies();
+		cookieStore.delete("auth_token");
+
+		const router = useRouter();
+		router.push("/login");
+	}
+
 	return (
 		<div className="flex h-full flex-col px-3 py-4 md:px-2">
 			<Link

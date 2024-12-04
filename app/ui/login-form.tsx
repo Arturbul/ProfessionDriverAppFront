@@ -21,6 +21,7 @@ import {
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { ValidateResponse } from "@/lib/utils";
 
 // Validation schema
 const formSchema = z.object({
@@ -59,7 +60,7 @@ export function LoginForm() {
 		try {
 			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 			// Send login request
-			const response = await fetch(`${apiUrl}/api/auth/login`, {
+			const response = await fetch(`${apiUrl}/auth/login`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
@@ -67,20 +68,7 @@ export function LoginForm() {
 					password: values.password,
 				}),
 			});
-
-			if (!response.ok) {
-				const contentType = response.headers.get("Content-Type");
-				if (contentType && contentType.includes("application/json")) {
-					console.log(contentType);
-					const errorData = await response.json();
-					throw new Error(
-						errorData.message || "Invalid credentials, try again."
-					);
-				} else {
-					const errorData = await response.text();
-					throw new Error(errorData || "Invalid credentials, try again.");
-				}
-			}
+			await ValidateResponse(response);
 
 			const data = await response.json();
 			document.cookie = `auth_token=${data.token}; path=/`;

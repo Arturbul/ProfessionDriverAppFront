@@ -19,7 +19,7 @@ const SelectFilter: React.FC<SelectFilterProps> = ({
 		<select
 			value={value}
 			onChange={(event) => onChange(event.target.value)}
-			className={`rounded-md border px-3 py-2 pr-10 ${className} appearance-none`}
+			className={`rounded-md border px-3 py-2 pr-10 ${className} appearance-none `}
 		>
 			<option value="">{placeholder}</option>
 			{options.map((option) => (

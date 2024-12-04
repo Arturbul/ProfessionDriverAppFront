@@ -5,7 +5,7 @@ async function verifyToken(token: string) {
 	const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 	try {
-		const response = await fetch(`${apiUrl}/api/auth/valid`, {
+		const response = await fetch(`${apiUrl}/auth/valid`, {
 			method: "POST",
 			headers: {
 				Authorization: `Bearer ${token}`, // Token is sent in the Authorization header
