@@ -8,6 +8,7 @@ import {
 import { Address } from "@/app/lib/interfaces/ValueObjects";
 import { DistanceData } from "@/app/lib/utils";
 import { DriverWorkLogSummaryDTO } from "@/app/lib/interfaces/DTOs";
+import { NextResponse } from "next/server";
 
 export interface CompanyBasicDTO extends Address {
 	name: string;
@@ -464,6 +465,7 @@ export async function getLatestWorkLogs(
 	}
 }
 
+//TODO
 export async function fetchWorkLogData() {
 	// Symulacja pobierania danych - możesz podłączyć prawdziwe API lub bazę danych
 	const isWorkStarted = false; // Zmień na dynamiczne dane
@@ -471,4 +473,21 @@ export async function fetchWorkLogData() {
 	const workTime = 5.5; // Zmień na dynamiczne dane (w godzinach)
 
 	return { isWorkStarted, mileage, workTime };
+}
+
+export async function getVehicleDetails(
+	request: Request,
+	{ params }: { params: { registration: string } }
+) {
+	const { registration } = params;
+
+	// Przykład danych do zwrotu
+	const mockData = {
+		registration,
+		make: "Volvo",
+		model: "FH16",
+		year: 2022,
+	};
+
+	return NextResponse.json(mockData);
 }

@@ -25,6 +25,13 @@ const formSchema = z.object({
 		.max(12, {
 			message: "Registration number must be at most 12 characters long.",
 		}),
+	registrationNumberTrailer: z
+		.string()
+		.min(0, { message: "Trailer registration number is optional." })
+		.max(12, {
+			message: "Registration number must be at most 12 characters long.",
+		})
+		.optional(),
 	logTime: z.date({
 		required_error: "Log time is required.",
 	}),
@@ -51,6 +58,7 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			registrationNumber: undefined,
+			registrationNumberTrailer: undefined,
 			logTime: new Date(),
 			place: undefined,
 			mileage: undefined,
@@ -86,6 +94,29 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 									<Input
 										type="text"
 										placeholder="Enter registration number"
+										{...field}
+										className="pl-10"
+									/>
+									<TruckIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
+								</div>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				{/* Registration Number Trailer */}
+				<FormField
+					control={form.control}
+					name="registrationNumberTrailer"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Trailer Registration Number</FormLabel>
+							<FormControl>
+								<div className="relative">
+									<Input
+										type="text"
+										placeholder="Enter trailer registration number (optional)"
 										{...field}
 										className="pl-10"
 									/>
