@@ -9,6 +9,7 @@ import {
 	StopIcon,
 } from "@heroicons/react/24/outline";
 import { WorkLogForm } from "./worklogform";
+import clsx from "clsx";
 
 type WorkLogCardsProps = {
 	isWorkStarted: boolean;
@@ -104,6 +105,7 @@ function Card({
 	onClick,
 	unit,
 	Icon,
+	className,
 }: {
 	title: string;
 	value: number | string;
@@ -111,10 +113,17 @@ function Card({
 	onClick?: () => void;
 	unit?: string;
 	Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+	className?: string;
 }) {
 	return (
 		<div
-			className="rounded-xl bg-gray-50 p-2 shadow-sm cursor-pointer hover:bg-gray-100"
+			className={clsx(
+				"rounded-xl bg-gray-50 p-2 shadow-sm",
+				{
+					"cursor-pointer hover:bg-gray-100": onClick, // Default interaction classes only if `onClick` exists
+				},
+				className // Merge user-defined classes
+			)}
 			onClick={onClick}
 		>
 			<div className="flex items-center p-4">

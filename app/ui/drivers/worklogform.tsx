@@ -13,9 +13,10 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { MapPinIcon, TruckIcon } from "@heroicons/react/24/outline";
+import { MapPinIcon, TruckIcon, UserIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { DatePicker } from "@/components/ui/date_picker";
+import { DateTimePicker } from "@/components/ui/datetime-picker";
 
 const formSchema = z.object({
 	registrationNumber: z
@@ -27,13 +28,12 @@ const formSchema = z.object({
 	logTime: z.date({
 		required_error: "Log time is required.",
 	}),
-	place: z.string().optional(),
-	mileage: z
-		.preprocess(
-			(value) => (typeof value === "string" ? parseFloat(value) : value),
-			z.number().nonnegative({ message: "Mileage must be a positive number." })
-		)
-		.optional(),
+	place: z.string({ required_error: "Log time is required." }),
+	mileage: z.preprocess(
+		(value) => (typeof value === "string" ? parseFloat(value) : value),
+		z.number().nonnegative({ message: "Mileage must be a positive number." }),
+		{ required_error: "Log time is required." }
+	),
 	driverUserName: z.string().optional(),
 });
 
@@ -50,9 +50,9 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			registrationNumber: "",
+			registrationNumber: undefined,
 			logTime: new Date(),
-			place: "",
+			place: undefined,
 			mileage: undefined,
 			driverUserName: undefined,
 		},
@@ -105,9 +105,30 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 						<FormItem>
 							<FormLabel>Log Time</FormLabel>
 							<FormControl>
-								<DatePicker
-									selectedDate={field.value}
-									onDateChange={(date) => field.onChange(date)}
+								<DateTimePicker
+									selectedDate={field.value} // Date part from form
+									selectedTime={
+										field.value
+											? `${field.value
+													.getHours()
+													.toString()
+													.padStart(2, "0")}:${field.value
+													.getMinutes()
+													.toString()
+													.padStart(2, "0")}`
+											: ""
+									} // Extract "HH:mm" in local time
+									onDateTimeChange={(date, time) => {
+										if (date && time) {
+											const [hours, minutes] = time.split(":").map(Number);
+											const updatedDate = new Date(date); // Use local date context
+											updatedDate.setHours(hours);
+											updatedDate.setMinutes(minutes);
+											field.onChange(updatedDate); // Update the complete date
+										} else {
+											field.onChange(undefined); // Reset if no date/time
+										}
+									}}
 								/>
 							</FormControl>
 							<FormMessage />
@@ -126,7 +147,7 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 								<div className="relative">
 									<Input
 										type="text"
-										placeholder="Enter place (optional)"
+										placeholder="Enter place"
 										{...field}
 										className="pl-10"
 									/>
@@ -146,17 +167,34 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 						<FormItem>
 							<FormLabel>Mileage</FormLabel>
 							<FormControl>
-								<Input
-									type="number"
-									placeholder="Enter mileage (optional)"
-									{...field}
-								/>
+								<Input type="number" placeholder="Enter mileage" {...field} />
 							</FormControl>
 							<FormMessage />
 						</FormItem>
 					)}
 				/>
-
+				<FormField
+					control={form.control}
+					name="driverUserName"
+					render={({ field }) => (
+						<FormItem>
+							<FormLabel>Driver User Name</FormLabel>
+							<FormControl>
+								<div className="relative">
+									<Input
+										type="text"
+										placeholder="Enter driver user name"
+										{...field}
+										className="pl-10"
+									/>
+									<UserIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
+								</div>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				{/* TODO dodać user field jak jest adminem ale wypełnione domyslnie userNmae admina */}
 				{/* Submit Button */}
 				<Button type="submit" className="w-full" aria-disabled={isPending}>
 					Submit
