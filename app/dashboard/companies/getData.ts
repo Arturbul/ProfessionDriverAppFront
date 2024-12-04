@@ -463,3 +463,12 @@ export async function getLatestWorkLogs(
 		throw error;
 	}
 }
+
+export async function fetchWorkLogData() {
+	// Symulacja pobierania danych - możesz podłączyć prawdziwe API lub bazę danych
+	const isWorkStarted = false; // Zmień na dynamiczne dane
+	const mileage = 123.45; // Zmień na dynamiczne dane
+	const workTime = 5.5; // Zmień na dynamiczne dane (w godzinach)
+
+	return { isWorkStarted, mileage, workTime };
+}
