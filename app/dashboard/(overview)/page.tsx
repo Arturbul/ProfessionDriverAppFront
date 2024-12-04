@@ -11,6 +11,7 @@ import { Metadata } from "next";
 import CardWrapper from "./card-wrapper";
 import DistanceChart from "./distance-chart";
 import LatestWorkLogsSummary from "./work-log-summary";
+import WorkLogWrapper from "./worklog-wrapper";
 
 export const metadata: Metadata = {
 	title: "Dashboard",
@@ -23,6 +24,11 @@ export default async function Page() {
 				Dashboard
 			</h1>
 			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+				<Suspense fallback={<CardsSkeleton />}>
+					<WorkLogWrapper />
+				</Suspense>
+			</div>
+			<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-6">
 				<Suspense fallback={<CardsSkeleton />}>
 					<CardWrapper />
 				</Suspense>

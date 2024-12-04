@@ -7,6 +7,7 @@ import {
 	GlobeEuropeAfricaIcon,
 	TruckIcon,
 } from "@heroicons/react/24/outline";
+import clsx from "clsx";
 
 // Ikony
 const iconMap = {
@@ -92,17 +93,28 @@ function Card({
 	type,
 	onClick,
 	unit,
+	className,
 }: {
 	title: string;
 	value: number | string;
 	type: "inspection" | "distance" | "ac" | "oc";
 	onClick?: () => void;
 	unit?: string;
+	className?: string;
 }) {
 	const Icon = iconMap[type];
 
 	return (
-		<div className="rounded-xl bg-gray-50 p-2 shadow-sm" onClick={onClick}>
+		<div
+			className={clsx(
+				"rounded-xl bg-gray-50 p-2 shadow-sm",
+				{
+					"cursor-pointer hover:bg-gray-100": onClick, // Default interaction classes only if `onClick` exists
+				},
+				className // Merge user-defined classes
+			)}
+			onClick={onClick}
+		>
 			<div className="flex p-4">
 				{Icon ? <Icon className="h-5 w-5 text-gray-700" /> : null}
 				<h3 className="ml-2 text-sm font-medium">{title}</h3>

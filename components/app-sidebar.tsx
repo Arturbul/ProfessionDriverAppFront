@@ -12,6 +12,7 @@ import {
 	PieChart,
 	Settings2,
 	SquareTerminal,
+	TruckIcon,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -35,81 +36,60 @@ const data = {
 	},
 	teams: [
 		{
-			name: "Acme Inc",
+			name: "Profession Driver Profile",
 			logo: GalleryVerticalEnd,
 			plan: "Enterprise",
-		},
-		{
-			name: "Acme Corp.",
-			logo: AudioWaveform,
-			plan: "Startup",
-		},
-		{
-			name: "Evil Corp.",
-			logo: Command,
-			plan: "Free",
 		},
 	],
 	navMain: [
 		{
-			title: "Playground",
-			url: "#",
-			icon: SquareTerminal,
+			title: "Driver",
+			url: "/dashboard",
+			icon: TruckIcon,
 			isActive: true,
 			items: [
 				{
-					title: "History",
-					url: "#",
+					title: "Dashboard",
+					url: "/dashboard",
 				},
 				{
-					title: "Starred",
-					url: "#",
-				},
-				{
-					title: "Settings",
-					url: "#",
+					title: "Work Log History",
+					url: "/dashboard/worklogs",
 				},
 			],
 		},
 		{
-			title: "Models",
-			url: "#",
+			title: "Company",
+			url: "/dashboard/companies",
 			icon: Bot,
 			items: [
 				{
-					title: "Genesis",
-					url: "#",
+					title: "Drivers",
+					url: "/dashboard/drivers",
 				},
 				{
-					title: "Explorer",
-					url: "#",
+					title: "Employees",
+					url: "/dashboard/employees",
 				},
 				{
-					title: "Quantum",
-					url: "#",
-				},
-			],
-		},
-		{
-			title: "Documentation",
-			url: "#",
-			icon: BookOpen,
-			items: [
-				{
-					title: "Introduction",
-					url: "#",
+					title: "Vehicles",
+					url: "/dashboard/vehicles",
 				},
 				{
-					title: "Get Started",
-					url: "#",
+					title: "LGVs",
+					url: "/dashboard/lgvs",
 				},
 				{
-					title: "Tutorials",
-					url: "#",
+					title: "Insuraces",
+					url: "/dashboard/insurances",
 				},
 				{
-					title: "Changelog",
-					url: "#",
+					title: "Vehicle Inspections",
+					url: "/dashboard/inspections",
+				},
+				{
+					title: "Companies",
+					url: "/dashboard/companies",
 				},
 			],
 		},
@@ -119,41 +99,21 @@ const data = {
 			icon: Settings2,
 			items: [
 				{
-					title: "General",
-					url: "#",
+					title: "Driver profile",
+					url: "/dashboard/drivers/details",
 				},
 				{
-					title: "Team",
-					url: "#",
+					title: "Employee profile",
+					url: "/dashboard/employees/details",
 				},
 				{
-					title: "Billing",
-					url: "#",
-				},
-				{
-					title: "Limits",
-					url: "#",
+					title: "Company profile",
+					url: "/dashboard/companies/details",
 				},
 			],
 		},
 	],
-	projects: [
-		{
-			name: "Design Engineering",
-			url: "#",
-			icon: Frame,
-		},
-		{
-			name: "Sales & Marketing",
-			url: "#",
-			icon: PieChart,
-		},
-		{
-			name: "Travel",
-			url: "#",
-			icon: Map,
-		},
-	],
+	projects: [],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

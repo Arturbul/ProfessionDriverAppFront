@@ -8,6 +8,7 @@ import {
 import { Address } from "@/app/lib/interfaces/ValueObjects";
 import { DistanceData } from "@/app/lib/utils";
 import { DriverWorkLogSummaryDTO } from "@/app/lib/interfaces/DTOs";
+import { NextResponse } from "next/server";
 
 export interface CompanyBasicDTO extends Address {
 	name: string;
@@ -462,4 +463,23 @@ export async function getLatestWorkLogs(
 		console.error("Error fetching data:", error);
 		throw error;
 	}
+}
+
+//TODO
+export async function fetchWorkLogData() {
+	// mockData
+	const isWorkStarted = true;
+	const mileage = 123.45;
+	const startTime: Date = new Date(
+		new Date().setHours(new Date().getHours() - 1)
+	);
+	const registrationNumber = "dsd1111";
+	const registrationNumberTrailer = "dsd222";
+	return {
+		isWorkStarted,
+		mileage,
+		startTime,
+		registrationNumber,
+		registrationNumberTrailer,
+	};
 }
