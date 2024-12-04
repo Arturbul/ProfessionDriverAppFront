@@ -1,7 +1,7 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,9 +14,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { MapPinIcon, TruckIcon, UserIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
-import { DatePicker } from "@/components/ui/date_picker";
+import { useState, useEffect } from "react";
 import { DateTimePicker } from "@/components/ui/datetime-picker";
+import { getRolesFromJWT } from "@/lib/utils";
+import { cookies } from "next/headers";
 
 const formSchema = z.object({
 	registrationNumber: z
@@ -35,11 +36,11 @@ const formSchema = z.object({
 	logTime: z.date({
 		required_error: "Log time is required.",
 	}),
-	place: z.string({ required_error: "Log time is required." }),
+	place: z.string({ required_error: "Place is required." }),
 	mileage: z.preprocess(
 		(value) => (typeof value === "string" ? parseFloat(value) : value),
 		z.number().nonnegative({ message: "Mileage must be a positive number." }),
-		{ required_error: "Log time is required." }
+		{ required_error: "Mileage is required." }
 	),
 	driverUserName: z.string().optional(),
 });
@@ -48,21 +49,38 @@ type WorkLogFormProps = {
 	type: "start" | "stop";
 	onSubmit: (data: z.infer<typeof formSchema>) => void;
 	isPending: boolean;
+	token?: string | null;
+	defaultValues?: Partial<z.infer<typeof formSchema>>;
 };
 
-export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
+export function WorkLogForm({
+	type,
+	onSubmit,
+	isPending,
+	defaultValues,
+	token,
+}: WorkLogFormProps) {
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const [isAdmin, setIsAdmin] = useState<boolean>(false);
 
-	// Initialize form
+	useEffect(() => {
+		if (token) {
+			const roles = getRolesFromJWT(token);
+			if (roles && roles.includes("Admin")) {
+				setIsAdmin(true);
+			}
+		}
+	}, [token]);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			registrationNumber: undefined,
-			registrationNumberTrailer: undefined,
-			logTime: new Date(),
-			place: undefined,
-			mileage: undefined,
-			driverUserName: undefined,
+			registrationNumber: defaultValues?.registrationNumber || "",
+			registrationNumberTrailer: defaultValues?.registrationNumberTrailer || "",
+			logTime: defaultValues?.logTime || new Date(),
+			place: defaultValues?.place || "",
+			mileage: defaultValues?.mileage || undefined,
+			driverUserName: isAdmin ? "admin" : defaultValues?.driverUserName || "",
 		},
 	});
 
@@ -137,7 +155,7 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 							<FormLabel>Log Time</FormLabel>
 							<FormControl>
 								<DateTimePicker
-									selectedDate={field.value} // Date part from form
+									selectedDate={field.value}
 									selectedTime={
 										field.value
 											? `${field.value
@@ -148,16 +166,16 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 													.toString()
 													.padStart(2, "0")}`
 											: ""
-									} // Extract "HH:mm" in local time
+									}
 									onDateTimeChange={(date, time) => {
 										if (date && time) {
 											const [hours, minutes] = time.split(":").map(Number);
-											const updatedDate = new Date(date); // Use local date context
+											const updatedDate = new Date(date);
 											updatedDate.setHours(hours);
 											updatedDate.setMinutes(minutes);
-											field.onChange(updatedDate); // Update the complete date
+											field.onChange(updatedDate);
 										} else {
-											field.onChange(undefined); // Reset if no date/time
+											field.onChange(undefined);
 										}
 									}}
 								/>
@@ -204,28 +222,32 @@ export function WorkLogForm({ type, onSubmit, isPending }: WorkLogFormProps) {
 						</FormItem>
 					)}
 				/>
-				<FormField
-					control={form.control}
-					name="driverUserName"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>Driver User Name</FormLabel>
-							<FormControl>
-								<div className="relative">
-									<Input
-										type="text"
-										placeholder="Enter driver user name"
-										{...field}
-										className="pl-10"
-									/>
-									<UserIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
-								</div>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-				{/* TODO dodać user field jak jest adminem ale wypełnione domyslnie userNmae admina */}
+
+				{/* Driver User Name - only visible if admin */}
+				{isAdmin && (
+					<FormField
+						control={form.control}
+						name="driverUserName"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Driver User Name</FormLabel>
+								<FormControl>
+									<div className="relative">
+										<Input
+											type="text"
+											placeholder="Enter driver user name"
+											{...field}
+											className="pl-10"
+										/>
+										<UserIcon className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-500" />
+									</div>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+				)}
+
 				{/* Submit Button */}
 				<Button type="submit" className="w-full" aria-disabled={isPending}>
 					Submit

@@ -15,24 +15,36 @@ import clsx from "clsx";
 type WorkLogCardsProps = {
 	isWorkStarted: boolean;
 	mileage: number;
-	workTime: number;
+	startTime: Date | null; // Czas rozpoczęcia pracy
+	registrationNumber: string;
+	registrationNumberTrailer?: string;
+	token?: string | null;
 };
 
 export default function WorkLogCards({
-	isWorkStarted: initialWorkStarted,
-	mileage: initialMileage,
-	workTime: initialWorkTime,
+	isWorkStarted,
+	mileage,
+	startTime,
+	registrationNumber,
+	registrationNumberTrailer,
+	token,
 }: WorkLogCardsProps) {
-	const [isWorkStarted, setIsWorkStarted] = useState(initialWorkStarted);
-	const [mileage, setMileage] = useState(initialMileage);
-	const [workTime, setWorkTime] = useState(initialWorkTime);
-	const [startTime, setStartTime] = useState<Date | null>(null); // Czas rozpoczęcia pracy
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [formType, setFormType] = useState<"start" | "stop">("start");
 
 	const [lgvDetails, setLgvDetails] = useState<any | null>(null); // Szczegóły pojazdu
 	const [isLgvLoading, setIsLgvLoading] = useState(false); // Stan ładowania
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+	const [formData, setFormData] = useState<{
+		registrationNumber: string;
+		registrationNumberTrailer?: string;
+	}>({
+		registrationNumber: registrationNumber,
+		registrationNumberTrailer: registrationNumberTrailer || "",
+	}); // Przechowywanie danych z formularza
+
+	const [workTime, setWorkTime] = useState<number>(0); // Czas pracy w godzinach
 
 	const fetchLgvDetails = async (registrationNumber: string) => {
 		try {
@@ -52,6 +64,14 @@ export default function WorkLogCards({
 		}
 	};
 
+	// Fetch LGV details when registration number is available
+	useEffect(() => {
+		if (registrationNumber) {
+			fetchLgvDetails(registrationNumber);
+		}
+	}, [registrationNumber]);
+
+	// Aktualizowanie czasu pracy, bazując na czasie rozpoczęcia pracy
 	useEffect(() => {
 		let interval: NodeJS.Timeout | null = null;
 
@@ -83,27 +103,31 @@ export default function WorkLogCards({
 	const handleFormSubmit = async (data: {
 		mileage: number;
 		registrationNumber: string;
+		registrationNumberTrailer?: string;
 	}) => {
 		alert(`Work log ${formType} submitted: ${JSON.stringify(data)}`);
 
 		if (formType === "start") {
-			setIsWorkStarted(true);
-			setStartTime(new Date()); // Ustaw czas rozpoczęcia
-			setMileage(data.mileage); // Przebieg z formularza
+			// Zapisanie danych z formularza
+			setFormData({
+				registrationNumber: data.registrationNumber,
+				registrationNumberTrailer: data.registrationNumberTrailer,
+			});
 
 			// Pobranie szczegółów pojazdu
 			fetchLgvDetails(data.registrationNumber);
 		} else {
-			setIsWorkStarted(false);
-			setStartTime(null);
-			setWorkTime(0);
-			setMileage(0);
+			alert(
+				`Work log ended: Registration Number: ${formData.registrationNumber}`
+			);
 		}
 
 		setIsModalOpen(false);
 	};
 
-	const displayedWorkTime = isWorkStarted ? workTime.toFixed(2) : "0.00";
+	const displayedWorkTime = startTime
+		? workTime.toFixed(2) // Wyświetlenie czasu pracy z dwoma miejscami po przecinku
+		: "Not Started";
 	const displayedMileage = isWorkStarted ? mileage : 0;
 
 	return (
@@ -131,12 +155,12 @@ export default function WorkLogCards({
 				Icon={MapIcon}
 			/>
 
-			{/* Aktualny czas pracy */}
+			{/* Czas rozpoczęcia pracy */}
 			<Card
-				title="Work Time"
+				title="Work Time (Hours)"
 				value={displayedWorkTime}
 				type="workTime"
-				unit="h"
+				unit="hrs"
 				Icon={ClockIcon}
 			/>
 
@@ -152,6 +176,7 @@ export default function WorkLogCards({
 				Icon={TruckIcon}
 				type="lgv"
 			/>
+
 			{/* Modal */}
 			{isModalOpen && (
 				<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -160,6 +185,8 @@ export default function WorkLogCards({
 							type={formType}
 							onSubmit={handleFormSubmit}
 							isPending={false}
+							defaultValues={formData}
+							token={token}
 						/>
 						<button
 							onClick={handleModalClose}
@@ -208,7 +235,7 @@ function Card({
 				<h3 className="ml-2 text-sm font-medium">{title}</h3>
 			</div>
 			<p
-				className={`${lusitana.className} truncate rounded-xl bg-white px-4 py-8 text-center text-2xl`}
+				className={`${lusitana.className} truncate rounded-xl bg-white px-4 py-8 text-center text-lg`}
 			>
 				{value} {unit}
 			</p>

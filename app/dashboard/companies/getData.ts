@@ -467,27 +467,19 @@ export async function getLatestWorkLogs(
 
 //TODO
 export async function fetchWorkLogData() {
-	// Symulacja pobierania danych - możesz podłączyć prawdziwe API lub bazę danych
-	const isWorkStarted = false; // Zmień na dynamiczne dane
-	const mileage = 123.45; // Zmień na dynamiczne dane
-	const workTime = 5.5; // Zmień na dynamiczne dane (w godzinach)
-
-	return { isWorkStarted, mileage, workTime };
-}
-
-export async function getVehicleDetails(
-	request: Request,
-	{ params }: { params: { registration: string } }
-) {
-	const { registration } = params;
-
-	// Przykład danych do zwrotu
-	const mockData = {
-		registration,
-		make: "Volvo",
-		model: "FH16",
-		year: 2022,
+	// mockData
+	const isWorkStarted = true;
+	const mileage = 123.45;
+	const startTime: Date = new Date(
+		new Date().setHours(new Date().getHours() - 1)
+	);
+	const registrationNumber = "dsd1111";
+	const registrationNumberTrailer = "dsd222";
+	return {
+		isWorkStarted,
+		mileage,
+		startTime,
+		registrationNumber,
+		registrationNumberTrailer,
 	};
-
-	return NextResponse.json(mockData);
 }
