@@ -26,6 +26,7 @@ import {
 	SidebarHeader,
 	SidebarRail,
 } from "@/components/ui/sidebar";
+import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
 
 // This is sample data.
 const data = {
@@ -61,7 +62,7 @@ const data = {
 		{
 			title: "Company",
 			url: "/dashboard/companies",
-			icon: Bot,
+			icon: BuildingOffice2Icon,
 			items: [
 				{
 					title: "Company overview",
