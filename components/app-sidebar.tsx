@@ -64,6 +64,10 @@ const data = {
 			icon: Bot,
 			items: [
 				{
+					title: "Company overview",
+					url: "/dashboard/companies/ /details",
+				},
+				{
 					title: "Drivers",
 					url: "/dashboard/drivers",
 				},
@@ -100,15 +104,15 @@ const data = {
 			items: [
 				{
 					title: "Driver profile",
-					url: "/dashboard/drivers/details",
+					url: "/dashboard/drivers/ /details",
 				},
 				{
 					title: "Employee profile",
-					url: "/dashboard/employees/details",
+					url: "/dashboard/employees/ /details",
 				},
 				{
 					title: "Company profile",
-					url: "/dashboard/companies/details",
+					url: "/dashboard/companies/ /details",
 				},
 			],
 		},
