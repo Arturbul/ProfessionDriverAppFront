@@ -44,7 +44,11 @@ export default function DriverDistanceChart({
 							<div
 								className="w-full rounded-md bg-sky-400"
 								style={{
-									height: `${(chartHeight / topLabel) * month.distance}px`,
+									height: `${
+										month.distance > 15000
+											? (chartHeight / topLabel) * 15000 // Ograniczamy wysokość do 15k
+											: (chartHeight / topLabel) * month.distance
+									}px`,
 								}}
 							></div>
 							<p className="-rotate-90 text-sm text-gray-400 sm:rotate-0">

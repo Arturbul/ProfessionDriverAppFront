@@ -303,7 +303,7 @@ export async function getDriverWorkedHours(
 		}
 
 		const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-		const url = new URL(`${apiUrl}/drivers/worked-hours`);
+		const url = new URL(`${apiUrl}/drivers/hours`);
 
 		// Dodaj parametry do URL
 		if (driverUserName) {
@@ -441,7 +441,7 @@ export async function getLatestWorkLogs(
 
 		const roles = getRolesFromJWT(token);
 		const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-		const url = new URL(`${apiUrl}/drivers/driver-worklogs/recent`);
+		const url = new URL(`${apiUrl}/drivers/worklogs/recent`);
 
 		url.searchParams.append("logCount", count.toString());
 		if (roles && roles.includes("Admin") && driverUserName) {

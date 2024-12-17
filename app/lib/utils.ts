@@ -89,10 +89,22 @@ export const generateYAxisDistance = (distances: DistanceData[]) => {
 	// na podstawie najwyższej wartości w danych i zaokrąglone w tysiącach
 	const yAxisLabels: string[] = [];
 	const highestRecord = Math.max(...distances.map((month) => month.distance));
-	const topLabel = Math.ceil(highestRecord / 1000) * 1000;
+
+	// Ustalamy górny limit etykiety na osi Y (zaokrąglony w tysiącach)
+	let topLabel = Math.ceil(highestRecord / 1000) * 1000;
+
+	// Dodanie etykiety ">15k" jeśli najwyższy dystans przekracza 15k
+	if (topLabel > 15000) {
+		yAxisLabels.push(">15K");
+		topLabel = 15000; // Ustalamy topLabel na 15k, aby dostosować do nowych etykiet
+	}
 
 	// Generowanie etykiet dla osi Y, przy czym każda etykieta to dystans w tysiącach
 	for (let i = topLabel; i >= 0; i -= 1000) {
+		if (i === 0 && topLabel > 15000) {
+			// Jeśli mamy etykietę ">15k", nie dodajemy zerowego dystansu
+			continue;
+		}
 		yAxisLabels.push(`${i / 1000}K`);
 	}
 
