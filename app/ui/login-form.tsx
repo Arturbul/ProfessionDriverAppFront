@@ -138,6 +138,14 @@ export function LoginForm() {
 					>
 						Log in <ArrowRightIcon className="ml-2 h-5 w-5" />
 					</Button>
+					<div className="mt-4 text-center">
+						<span className="text-sm text-gray-600">
+							Don't have an account?{" "}
+							<a href="/register" className="text-blue-600 hover:underline">
+								Create a new account
+							</a>
+						</span>
+					</div>
 					<div
 						className="flex h-8 items-center space-x-1 mt-4"
 						aria-live="polite"

@@ -207,6 +207,14 @@ export function RegistrationForm() {
 					>
 						Register <ArrowRightIcon className="ml-2 h-5 w-5" />
 					</Button>
+					<div className="mt-4 text-center">
+						<span className="text-sm text-gray-600">
+							Already have an account?{" "}
+							<a href="/login" className="text-blue-600 hover:underline">
+								Back to log in
+							</a>
+						</span>
+					</div>
 					<div
 						className="flex h-8 items-center space-x-1 mt-4"
 						aria-live="polite"

@@ -49,7 +49,7 @@ export default function WorkLogCards({
 	const fetchLgvDetails = async (registrationNumber: string) => {
 		try {
 			setIsLgvLoading(true);
-			const response = await fetch(`/api/lgv/${registrationNumber}`);
+			const response = await fetch(`/api/vehicles/lgv/${registrationNumber}`);
 			if (!response.ok) {
 				throw new Error("Failed to fetch LGV details");
 			}
