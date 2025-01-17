@@ -276,6 +276,7 @@ export async function fetchCardDataDriver(driverUserName?: string | null) {
 			driverUserName,
 			"currentMonth"
 		);
+
 		return {
 			distance7Days,
 			distanceMonth,
@@ -465,21 +466,82 @@ export async function getLatestWorkLogs(
 	}
 }
 
-//TODO
-export async function fetchWorkLogData() {
-	// mockData
-	const isWorkStarted = true;
-	const mileage = 123.45;
-	const startTime: Date = new Date(
-		new Date().setHours(new Date().getHours() - 1)
-	);
-	const registrationNumber = "dsd1111";
-	const registrationNumberTrailer = "dsd222";
-	return {
-		isWorkStarted,
-		mileage,
-		startTime,
-		registrationNumber,
-		registrationNumberTrailer,
-	};
+export async function fetchWorkLogData(
+	active: boolean = true,
+	driverUserName?: string
+): Promise<{
+	isWorkStarted: boolean;
+	mileage: number;
+	startTime: Date | null;
+	registrationNumber: string;
+	registrationNumberTrailer: string;
+}> {
+	try {
+		const cookieStore = cookies();
+		const token = cookieStore.get("auth_token")?.value;
+
+		if (!token) {
+			throw new Error("JWT token not found");
+		}
+
+		const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+		const url = new URL(`${apiUrl}/worklog/latest`);
+
+		// Append query parameters
+		if (driverUserName) {
+			url.searchParams.append("driverUserName", driverUserName);
+		}
+		if (active !== undefined) {
+			url.searchParams.append("active", active.toString());
+		}
+
+		const response = await fetch(url.toString(), {
+			method: "GET",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+		});
+
+		if (response.status === 204) {
+			return {
+				isWorkStarted: false,
+				mileage: 0,
+				startTime: null,
+				registrationNumber: "",
+				registrationNumberTrailer: "",
+			};
+		}
+		if (!response.ok) {
+			throw new Error(`Failed to fetch data: ${response.statusText}`);
+		}
+
+		const data: {
+			driverWorkLogId: string;
+			transportUnit: {
+				brand: string;
+				registrationNumber: string;
+				brandTrailer: string;
+				registrationNumberTrailer: string;
+			};
+			startEntry: {
+				logTime: string;
+				place: string;
+				mileage: number;
+			} | null;
+			endEntry: any;
+		} = await response.json();
+
+		return {
+			isWorkStarted: data.startEntry !== null,
+			mileage: data.startEntry?.mileage || 0,
+			startTime: data.startEntry ? new Date(data.startEntry.logTime) : null,
+			registrationNumber: data.transportUnit?.registrationNumber || "",
+			registrationNumberTrailer:
+				data.transportUnit?.registrationNumberTrailer || "",
+		};
+	} catch (error) {
+		console.error("Error fetching work log data:", error);
+		throw error;
+	}
 }

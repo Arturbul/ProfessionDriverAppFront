@@ -4,10 +4,9 @@ import CardList from "@/app/ui/drivers/cards";
 import { fetchCardDataDriver } from "../companies/getData";
 
 export default async function CardWrapper() {
-	const data = await fetchCardDataDriver(); // Pobranie danych po stronie serwera
-
-	// Rozdzielenie danych
+	const data = await fetchCardDataDriver();
 	const { distance7Days, distanceMonth, hours7Days, hoursMonth } = data;
+
 	const formatWorkedHours = (hours: number, minutes: number) =>
 		`${Math.floor(hours)}:${minutes.toString().padStart(2, "0")}`;
 	return (

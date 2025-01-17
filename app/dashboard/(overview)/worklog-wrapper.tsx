@@ -1,6 +1,5 @@
 "use server";
 
-import { lusitana } from "@/app/ui/fonts";
 import { fetchWorkLogData } from "../companies/getData";
 import WorkLogCards from "@/app/ui/drivers/worklog-cards";
 import { cookies } from "next/headers";

@@ -99,7 +99,7 @@ export const columns: ExtendedColumnDef<CompanyBasicDTO>[] = [
 		filterMeta: {
 			title: "Country",
 			type: "select",
-			options: ["Poland", "USA", "UK", "Canada", "Germany", "France"],
+			options: ["Poland", "USA"],
 			placeholder: "All",
 		},
 		filterFn: filterSelect,

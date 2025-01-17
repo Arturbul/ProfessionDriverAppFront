@@ -51,7 +51,7 @@ export default function WorkLogCards({
 			setIsLgvLoading(true);
 			const response = await fetch(`/api/vehicles/lgv/${registrationNumber}`);
 			if (!response.ok) {
-				throw new Error("Failed to fetch LGV details");
+				throw new Error(registrationNumber);
 			}
 			const data = await response.json();
 			setLgvDetails(data);
@@ -66,7 +66,7 @@ export default function WorkLogCards({
 
 	// Fetch LGV details when registration number is available
 	useEffect(() => {
-		if (registrationNumber) {
+		if (isWorkStarted && registrationNumber) {
 			fetchLgvDetails(registrationNumber);
 		}
 	}, [registrationNumber]);
@@ -104,25 +104,58 @@ export default function WorkLogCards({
 		mileage: number;
 		registrationNumber: string;
 		registrationNumberTrailer?: string;
+		place?: string;
 	}) => {
-		alert(`Work log ${formType} submitted: ${JSON.stringify(data)}`);
+		try {
+			const started = formType !== "start";
+			const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+			const url = new URL(`${apiUrl}/worklog/${started}`);
 
-		if (formType === "start") {
-			// Zapisanie danych z formularza
-			setFormData({
+			// Przygotowanie ciała żądania
+			const body = {
 				registrationNumber: data.registrationNumber,
-				registrationNumberTrailer: data.registrationNumberTrailer,
+				registrationNumberTrailer: data.registrationNumberTrailer || null,
+				logTime: new Date().toISOString(),
+				place: data.place || "Unknown location",
+				mileage: data.mileage,
+			};
+
+			// Wykonanie żądania
+			const response = await fetch(url.toString(), {
+				method: "POST",
+				headers: {
+					Authorization: `Bearer ${token}`,
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(body),
 			});
 
-			// Pobranie szczegółów pojazdu
-			fetchLgvDetails(data.registrationNumber);
-		} else {
-			alert(
-				`Work log ended: Registration Number: ${formData.registrationNumber}`
-			);
-		}
+			if (!response.ok) {
+				throw new Error(`Failed to fetch data: ${response.statusText}`);
+			}
 
-		setIsModalOpen(false);
+			alert(`Work log ${formType} submitted: ${JSON.stringify(data)}`);
+
+			if (formType === "start") {
+				// Zapisanie danych z formularza
+				setFormData({
+					registrationNumber: data.registrationNumber,
+					registrationNumberTrailer: data.registrationNumberTrailer,
+				});
+
+				// Pobranie szczegółów pojazdu
+				fetchLgvDetails(data.registrationNumber);
+			} else {
+				alert(
+					`Work log ended: Registration Number: ${formData.registrationNumber}`
+				);
+			}
+			window.location.reload();
+		} catch (error) {
+			console.error("Error submitting work log entry:", error);
+		} finally {
+			setIsModalOpen(false);
+		}
 	};
 
 	const displayedWorkTime = startTime
